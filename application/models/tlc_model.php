@@ -29,7 +29,8 @@ class Tlc_model extends CI_Model{
 			"pswd"		=> md5($this->input->post("password")),
 			"firstname"	=> $this->input->post("firstname"),
 			"lastname"	=> $this->input->post("lastname"),
-			"inst_id"	=> $this->input->post("institute"), //bounds checking required
+			"contact_num" => $this->input->post("phone_num"),
+			"inst_id"	=> $this->input->post("institute"),
 			"email"		=> $this->input->post("email")
 		);
 		

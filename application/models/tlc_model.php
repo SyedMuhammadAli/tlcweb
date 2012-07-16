@@ -102,6 +102,32 @@ class Tlc_model extends CI_Model{
 		}
 	}
 	
+	function get_editable_from_profile(){
+		$uid = $this->get_user_id();
+		
+		$this->db->select("fb_usr, web_link, contact_num, email");
+		$this->db->from("members");
+		$this->db->where(array('id' => $uid));
+		
+		$q = $this->db->get();
+		
+		if($q->num_rows() == 1){
+			return $q->row_array();
+		} else {
+			//something really bad happened
+			return false;
+		}
+	}
+	
+	function update_editable_profile($fb_usr, $web_link, $contact_num, $email_addr){
+		$uid = $this->get_user_id();
+		
+		$this->db->insert(array('fb_user' => $fb_usr,
+								'web_link' => $web_link,
+								'contact_num' => $contact_num,
+								'email' => $email_addr));
+	}
+	
 	function get_institute_array(){
 		$q = $this->db->get('institutes');
 		$result = array();
@@ -139,11 +165,6 @@ class Tlc_model extends CI_Model{
 			return false;
 		}
 		
-	}
-	
-	function update_profile($profile){
-		$this->db->where("usr", $this->get_username());
-		$this->db->update("members", $profile);
 	}
 	
 	function post_news(){

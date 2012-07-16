@@ -8,7 +8,7 @@
  * Modify session encryption key
  * Non members cant view profiles (there are no private profiles)
  * Profile control panel with links to allowed actions:
- * 		edit profile, change password, participation event list,
+ * 		edit profile, change password,
  * 		rem members/profile, (hit count?), hide personal data but not profile,
  * 		upload profile picture.
  * 
@@ -111,8 +111,7 @@ class Home extends CI_Controller {
 		if($this->tlc_model->login_user()){
 			$data = array(
 				'auth_lock' => $this->encrypt->encode($this->input->post('username'), $this->tlc_model->get_cipher_key(1)),
-				'auth_key' => true
-				//'auth_key' => $this->encrypt->encode($this->tlc_model->get_cipher_key(3), $this->tlc_model->get_cipher_key(2))
+				'auth_key'	=> true
 			);
 			
 			$this->session->set_userdata($data);
@@ -232,7 +231,7 @@ class Home extends CI_Controller {
 			
 			if($already_exists)
 			{
-				$data['error'] = "User already exists with the same username or email.";
+				$data['validation_error'] = "User already exists with the same username or email.";
 				$this->load->view("signup", $data);
 				return;
 			}
@@ -246,14 +245,14 @@ class Home extends CI_Controller {
 					echo "<h3>Thank You. Please wait while an administrator accepts your signup request.</h3>";
 					echo anchor('home', "Click here to go back to the main page.");
 				} else {
-					$this->load->view("signup");
+					$this->load->view("signup", array("validation_error" => "something really bad happed. pls report this issue."));
 				}
 			}
 		} else {
 			$this->load->view("signup", $data);
 		}
 	}
-	
+
 }
 
 ?>

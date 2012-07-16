@@ -22,7 +22,7 @@ class Members extends CI_Controller{
 	}
 	
 	function index(){
-		echo "<h3>Welcome to Members Lounge, ". $this->tlc_model->get_username() . "</h3>";
+		echo "<h3>Profile Control Panel, ". $this->tlc_model->get_username() . "</h3>";
 		echo anchor('home/index', 'Home'); echo "<br>";
 		echo anchor('members/post', "Create a Thread"); echo "<br>";
 		echo anchor('members/profile', "View Profile"); echo "<br>";
@@ -37,7 +37,7 @@ class Members extends CI_Controller{
 		$data['is_logged_in'] = $this->is_logged_in;
 		
 		if($arg == "done" && $this->input->post("submit")){
-			$this->load->libarary("validation");
+			$this->load->library("form_validation");
 			
 			$this->form_validation->set_rules("fb_user_name", "Fcebook Username", "trim|required|max_length[16]");
 			$this->form_validation->set_rules("website_link", "Website Link", "trim|required|max_length[48]");			
@@ -62,6 +62,40 @@ class Members extends CI_Controller{
 	
 	function profile($arg = ""){
 		echo "<h2>Page scheduled for removal. to be replaced by the Control Panel</h2>";
+	}
+	
+	function change_password(){
+		$data['title'] = "The Literary Club - Change Profile";
+		
+		if($this->input->post("submit")){
+			$this->load->library("form_validation");
+			
+			$this->form_validation->set_rules("old_password", "password", "trim|required|min_length[6]|max_length[17]");
+			$this->form_validation->set_rules("new_password", "password", "trim|required|min_length[6]|max_length[17]");
+			$this->form_validation->set_rules("new_password2", "password", "trim|required|matches[new_password]");
+			
+			if($this->form_validation->run() == false){
+				$data["validation_errors"] = validation_errors();
+				//$this->load->view("members/change_password", $data);
+			} else {
+				if($this->tlc_model->validate_password($this->input->post("old_password"))){
+					$this->tlc_model->change_password_to($this->input->post("new_password"));
+					redirect("home/logout");
+				}
+			}
+		} else {
+			echo validation_errors();
+			echo form_open("members/change_password");
+			echo form_password("old_password", "254136");
+			echo form_password("new_password", "587469");
+			echo form_password("new_password2", "587469");
+			echo form_submit("submit", "Change");
+			echo form_close();
+		}
+	}
+	
+	function change_visibility(){
+		//implementation pending
 	}
 	
 	function post(){ //create a new post

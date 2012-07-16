@@ -6,9 +6,12 @@ class Tlc_model extends CI_Model{
 	private $cipher_authkey_salt = "3wjw#1,=+800.ctk+8-fghao6pp7t7giy9zlz_";
 	private $cipher_authkey = "l2ddd2k7+590.1z5s5udto7mcq.ndb3.lg5i99";
 	
+	private $uid;
+	
 	function __construct(){
 		parent::__construct();
 		$this->load->library('encrypt');
+		$this->uid = $this->get_user_id();
 	}
 	
 	//Returns cipher keys, currently hard coded
@@ -126,6 +129,17 @@ class Tlc_model extends CI_Model{
 								'web_link' => $web_link,
 								'contact_num' => $contact_num,
 								'email' => $email_addr));
+	}
+	
+	function validate_password($pswd){
+		$user_row = $this->db->get_where("members", array("id" => $this->uid))->row();
+		
+		return ($user_row->pswd == md5($pswd)) ? true : false;
+	}
+	
+	function change_password_to($new_password){
+		$this->db->where("id", $this->uid);
+		$this->db->update("members", array("pswd" => md5($new_password)));
 	}
 	
 	function get_institute_array(){

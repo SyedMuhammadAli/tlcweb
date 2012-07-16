@@ -1,22 +1,35 @@
 <?php
 
 /* TODO List v1
- * Make a general view for error messages and pass in the message.
+ * Make a general view for error messages and pass in the message. [TDK]
+ * Add facebook like, and tweet to posts and events.  [TDK]
+ * Add CAPTCHA to register
+ * Save additional profile info inside session file.
+ * Modify session encryption key
+ * Non members cant view profiles (there are no private profiles)
+ * Profile control panel with links to allowed actions:
+ * 		edit profile, change password, participation event list,
+ * 		rem members/profile, (hit count?), hide personal data but not profile,
+ * 		upload profile picture.
+ * 
  * Make primitive administration panel
  * 		- tag members to events
  * 		- download event participants list
  * 		- enable accounts
- * Add facebook like, and tweet to posts and events.
- * Add CAPTCHA to register
- * Revise profile edit. Remove name and institute change option.
- * Add profile option to allow user to change password.
  * 
  * TODO beyond v1
  * Login with facebook support
+ * Add domain/username functionality.
+ *  * MicroBlogging platform to allow people to write and share...
+ * 		How much to allow?
+ * 		How to make visible
+ * 		why differennt from facebook, twitter
+ * 		why on this web?
+ * Add society affiliations (student society groups) - needs refining: student social network
  */
 
-error_reporting(E_ALL | E_STRICT);
-ini_set("display_errors", 1);
+//error_reporting(E_ALL | E_STRICT);
+//ini_set("display_errors", 1);
 
 class Home extends CI_Controller {
 	private		$total_threads,

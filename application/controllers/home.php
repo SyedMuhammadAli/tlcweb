@@ -5,17 +5,18 @@
  * Add facebook like, and tweet to posts and events.  [TDK]
  * Add CAPTCHA to register
  * Save additional profile info inside session file.
- * Modify session encryption key
- * Non members cant view profiles (there are no private profiles)
+ ** Enable the /home/profile method to display all but disabled profiles, if the user is logged in
  * Profile control panel with links to allowed actions:
  * 		edit profile, change password,
  * 		rem members/profile, (hit count?), hide personal data but not profile,
  * 		upload profile picture.
  * 
  * Make primitive administration panel
- * 		- tag members to events
- * 		- download event participants list
- * 		- enable accounts
+ * 		- view/modify priviledges table
+ * 		- list view/delete/edit threads
+ * 		- list view/delete/edit/download events + add members to events
+ * 		- add/remove institute
+ * 		- enable/disable accounts accounts
  * 
  * TODO beyond v1
  * Login with facebook support
@@ -92,11 +93,17 @@ class Home extends CI_Controller {
 	
 	/* Returns a string of the time remaining in d-h-m format using a unix timestamp */
 	private function calc_time_remaining($unix_evt_time){
+		$this->load->helper("date");
+		
+		return timespan(time(), $unix_evt_time);
+		
+		/*//old
 		$evt_d = intval( ($unix_evt_time - time())/(60*60*24) );
 		$evt_h = intval( ($unix_evt_time - time())/(60*60) ) - $evt_d*24;
 		$evt_m = intval( ($unix_evt_time - time())/(60) ) - $evt_h*60 - $evt_d*24*60;
 		
 		return ($evt_d . "d, " . $evt_h . "hr, ".  $evt_m . "m. ". " Remaining");
+		*/
 	}
 	
 	function about(){
@@ -186,19 +193,17 @@ class Home extends CI_Controller {
 	}
 	
 	function profile($id = -1){
-		if($id >= 0){
-			$this->db->select('usr, firstname, lastname, email');
-			$this->db->from('members');
-			$this->db->where('id', $id);
-			$query = $this->db->get();
-				
-			$data['title'] = "The Literary Club - User Profile";
-			$data['profile'] = $query->row_array();
-				
+		if(!is_int($id) && $id < 0)
+			die("<h2>Invalid profile id. Error Code HPi1</h2>");
+		
+		$data['title'] = "The Literary Club - User Profile";
+		$data['profile'] = $this->tlc_model->get_profile($id);
+		$data['events_organized'] = $this->tlc_model->get_events_organized($id);
+		
+		if($data['profile']) //if profile id is valid
 			$this->load->view('public_profile', $data);
-		} else {
-			die("Invalid profile id.");
-		}
+		else
+			die("<h2>Invalid profile id. Error Code HPie2</h2>");
 	}
 	
 	function signup($arg = ""){
@@ -241,12 +246,9 @@ class Home extends CI_Controller {
 				$this->load->view("signup", $data);
 				return;
 			} else {
-				if($this->tlc_model->create_user() == TRUE){
-					echo "<h3>Thank You. Please wait while an administrator accepts your signup request.</h3>";
-					echo anchor('home', "Click here to go back to the main page.");
-				} else {
-					$this->load->view("signup", array("validation_error" => "something really bad happed. pls report this issue."));
-				}
+				$this->tlc_model->create_user(); //create user
+				echo "<h3>Thank You. Please wait while an administrator accepts your signup request.</h3>";
+				echo anchor('home', "Click here to go back to the main page.");
 			}
 		} else {
 			$this->load->view("signup", $data);

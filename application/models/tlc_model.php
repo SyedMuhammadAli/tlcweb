@@ -38,12 +38,6 @@ class Tlc_model extends CI_Model{
 		);
 		
 		$this->db->insert("members", $account_info);
-		
-		$q = $this->db->get_where("members", array("usr" => $this->input->post("username")));
-		
-		$this->db->insert("not_activated", array("user_id" => $q->row()->id));
-		
-		return true;
 	}
 	
 	function login_user(){
@@ -52,65 +46,54 @@ class Tlc_model extends CI_Model{
 		
 		$query = $this->db->get("members");
 
-		if($query->num_rows() == 1){
-			$inactive = $this->db->get_where("not_activated", array("user_id" => $query->row()->id));
-			
-			if($inactive->num_rows() == 1){
-				return false;
-			} else {
-				return true;
-			}
-		}
+		if($query->num_rows() == 1 && $query->row()->active != false)
+			return true;
+		else
+			return false;
 	}
 	
-	function get_profile(){
-		$username = $this->get_username();
-		
+	function get_profile($id){
 		/* Fetching profile information */
-		$this->db->select(	"members.id AS user_id,
-							members.usr AS user,
-							members.firstname AS firstname,
-							members.lastname AS lastname,
-							members.email AS email,
-							institutes.name AS institute,");
+		$this->db->select(" members.usr,
+							members.fb_usr,
+							members.firstname,
+							members.lastname,
+							members.web_link,
+							members.email,
+							members.contact_num,
+							members.hidden,
+							departments.name AS department_name,
+							institutes.name AS institute_name");
 		
-		$this->db->from("members, institutes");
+		$this->db->from("members");
 		
-		$this->db->where("members.inst_id = institutes.id");
-		$this->db->where("members.usr", $username);
+		$this->db->join("institutes", "members.inst_id = institutes.id");
+		$this->db->join("departments", "members.dept_id = departments.id");
+		
+		$this->db->where("members.id", $id);
 		
 		$profile = $this->db->get();
 		
-		//tmp var to hold user_id for query
-		$id_tmp = $profile->row()->user_id;
-		
-		/* Fetching events information */
-		$this->db->distinct();
-		$this->db->select("events.name AS name,
-							events.id AS id");
-		$this->db->from("members, events, event_organizers");
-		$this->db->where("event_organizers.user_id = {$id_tmp}");
-		$this->db->where("event_organizers.event_id = events.id");
-		
-		
-		/* Validating and returning result */
 		if($profile->num_rows() == 1){
-			$data = $profile->row_array();
-			$data["username"] = $username;
-			$data["events"] = $this->db->get();
-			
-			return $data;
+			return $profile->row_array();
 		} else {
-			return false; //die("Couldn"t get proper data for profile.");
+			return false; //die("Couldn"t get proper data for profile.")
 		}
 	}
 	
-	function get_editable_from_profile(){
-		$uid = $this->get_user_id();
+	function get_events_organized($id){
+		$this->db->select("events.id, events.name");
+		$this->db->from("event_organizers, members");
+		$this->db->join("events", "event_organizers.event_id = events.id");
+		$this->db->where("members.id", $id);
 		
-		$this->db->select("fb_usr, web_link, contact_num, email");
+		return $this->db->get();
+	}
+	
+	function get_editable_from_profile(){
+		$this->db->select("fb_usr, web_link, contact_num, email, hidden");
 		$this->db->from("members");
-		$this->db->where(array('id' => $uid));
+		$this->db->where(array('id' => $this->uid));
 		
 		$q = $this->db->get();
 		
@@ -123,12 +106,11 @@ class Tlc_model extends CI_Model{
 	}
 	
 	function update_editable_profile($fb_usr, $web_link, $contact_num, $email_addr){
-		$uid = $this->get_user_id();
-		
-		$this->db->insert(array('fb_user' => $fb_usr,
-								'web_link' => $web_link,
-								'contact_num' => $contact_num,
-								'email' => $email_addr));
+		$this->db->where(array("id" => $this->uid));
+		$this->db->update("members", array('fb_user'	=> $fb_usr,
+											'web_link'	=> $web_link,
+											'contact_num' => $contact_num,
+											'email'		=> $email_addr));
 	}
 	
 	function validate_password($pswd){
@@ -159,7 +141,12 @@ class Tlc_model extends CI_Model{
 		
 		if(!$user){ return false; } //if not set
 		
-		$uid = $this->db->get_where("members", array('usr' => $user))->row()->id;
+		//$uid = $this->db->get_where("members", array('usr' => $user))->row()->id;
+		
+		$this->db->select("id");
+		$this->db->from("members");
+		$this->db->where('usr', $user);
+		$uid = $this->db->get()->row()->id;
 		
 		return $uid;
 	}

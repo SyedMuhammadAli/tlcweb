@@ -27,7 +27,7 @@ class Members extends CI_Controller{
 		echo anchor('members/post', "Create a Thread"); echo "<br>";
 		echo anchor('members/profile', "View Profile"); echo "<br>";
 		echo anchor('home/logout', "Logout"); echo "<br>"; echo "<br>"; echo "<br>";
-		
+	
 		//$this->load->view('member_cp', $data);
 	}
 	
@@ -84,6 +84,7 @@ class Members extends CI_Controller{
 				}
 			}
 		} else {
+			//tmp form
 			echo validation_errors();
 			echo form_open("members/change_password");
 			echo form_password("old_password", "254136");
@@ -91,11 +92,12 @@ class Members extends CI_Controller{
 			echo form_password("new_password2", "587469");
 			echo form_submit("submit", "Change");
 			echo form_close();
+			//$this->load->view("m_change_pswd", $data);
 		}
 	}
 	
-	function change_visibility(){
-		//implementation pending
+	function hide_profile($arg = true){
+		//$this->tlc_model->change_profile_visibility($arg);
 	}
 	
 	function post(){ //create a new post

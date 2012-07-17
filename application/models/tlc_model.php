@@ -62,6 +62,7 @@ class Tlc_model extends CI_Model{
 							members.email,
 							members.contact_num,
 							members.hidden,
+							members.active,
 							departments.name AS department_name,
 							institutes.name AS institute_name");
 		

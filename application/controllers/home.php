@@ -29,8 +29,8 @@
  * Add society affiliations (student society groups) - needs refining: student social network
  */
 
-//error_reporting(E_ALL | E_STRICT);
-//ini_set("display_errors", 1);
+error_reporting(E_ALL | E_STRICT);
+ini_set("display_errors", 1);
 
 class Home extends CI_Controller {
 	private		$total_threads,
@@ -193,14 +193,14 @@ class Home extends CI_Controller {
 	}
 	
 	function profile($id = -1){
-		if(!is_int($id) && $id < 0)
-			die("<h2>Invalid profile id. Error Code HPi1</h2>");
+		if(!$this->tlc_model->is_user_logged_in()) die("<h2>You must be logged in to view member profiles.</h2>");
+		if(!is_int($id) && $id < 0) die("<h2>Invalid profile id. Error Code HPi1</h2>");
 		
 		$data['title'] = "The Literary Club - User Profile";
 		$data['profile'] = $this->tlc_model->get_profile($id);
 		$data['events_organized'] = $this->tlc_model->get_events_organized($id);
 		
-		if($data['profile']) //if profile id is valid
+		if(	$data['profile'] && $data['profile']['active'] && !$data['profile']['hidden'] )
 			$this->load->view('public_profile', $data);
 		else
 			die("<h2>Invalid profile id. Error Code HPie2</h2>");

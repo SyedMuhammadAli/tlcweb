@@ -23,12 +23,17 @@ class Members extends CI_Controller{
 	
 	function index(){
 		$data['title'] = "The Literary Club - Account Settings";
+		$data['is_logged_in'] = $this->is_logged_in;
 		$this->load->view('member_cp', $data);
 	}
 	
 	//added 16 jul 12
 	function edit($arg = ""){
+		echo "<h4>Page scheduled for removal.</h4>";
+		return;
+		
 		$data['title'] = "The Literary Club - Edit Profile";
+		$data['is_logged_in'] = $this->is_logged_in;
 		
 		if($arg == "done" && $this->input->post("submit")){
 			$this->load->library("form_validation");
@@ -60,6 +65,7 @@ class Members extends CI_Controller{
 	
 	function change_password(){
 		$data['title'] = "The Literary Club - Change Password";
+		$data['is_logged_in'] = $this->is_logged_in;
 		
 		if($this->input->post("submit")){
 			$this->load->library("form_validation");

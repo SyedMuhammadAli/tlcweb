@@ -3,8 +3,6 @@
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>TLC | The Literary Club</title>
-<!------fb like box script -->
-<div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -205,7 +203,7 @@
                                             </div> <!-- end #entries -->
                                         </div> <!-- end #left-area -->
                                         <div id="sidebar">
-                                            <?php /* if(!$is_logged_in): ?>
+                                            <?php if(!$is_logged_in): ?>
                                             <div id="loginForm">
                                                 <h4 class="main-title widget-title"><?php echo "Login Here" ?></h4>
                                                 <div class="widget">
@@ -216,7 +214,7 @@
                                                         <?php echo form_close(); ?>
                                                 </div><!--end.widgit-->          				
                                             </div><!--end.login-->
-                                            <?php endif; */ ?>
+                                            <?php endif; ?>
                                             <?php if($is_logged_in): ?>
                                             <h4 class="main-title widget-title"><?php echo"Stats"?></h4>
                                             <div class="widget">

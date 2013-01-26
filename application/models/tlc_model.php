@@ -70,6 +70,7 @@ class Tlc_model extends CI_Model{
 		return $this->db->get();
 	}
 	
+	//obsolete
 	function get_editable_from_profile(){
 		$this->db->select("contact_num, email, hidden");
 		$this->db->from("members");

@@ -144,16 +144,6 @@ class Home extends CI_Controller {
 		}
 	}
 	
-	function participant_login(){
-		/* Participant Teams Login
-		 * 
-		 * If event not active - print error.
-		 * If team not enabled - print error.
-		 * If password incorrect - print error.
-		 * else allow uploading pdf/doc/txt.
-		 * */
-	}
-	
 	function logout(){
 		$this->session->sess_destroy();
 		redirect('home');

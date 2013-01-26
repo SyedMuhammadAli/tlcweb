@@ -5,11 +5,6 @@
 	<li>
 		<?php echo anchor("events/index", "Events"); ?>
 		<ul class="sub-menu">
-			<?php if($is_logged_in):?>
-			<li>
-				<?php //echo anchor("events/create","Create Event");?>
-			</li>
-			<?php endif?>
 			<li>
 				<?php echo anchor("events/timeline/future","Upcoming Events");?>
 			</li>
@@ -20,7 +15,11 @@
 	</li>
 	<?php if(!$is_logged_in):?>
 	<li>
-		<?php /*echo anchor("home/signup", "Register");*/?>
+		<?php echo anchor("home/signup", "Register"); ?>
+	</li>
+	<?php else: ?>
+	<li>
+		<?php echo anchor("members/", "Account Settings"); ?>
 	</li>
 	<?php endif ?>
 	<li>
@@ -29,9 +28,9 @@
 	<li>
 		<?php echo anchor("home/about", "About Us"); ?>
 	</li>
-	<?php if($is_logged_in){
-          	  echo "<li>".anchor("members/", "Account Settings")."</li>";
-              echo "<li>".anchor("home/logout", "Logout")."</li>";
-     }
-    ?>
+	<?php if($is_logged_in): ?>
+	<li>
+		<?php echo anchor("home/logout", "Logout"); ?>
+	</li>
+	<?php endif ?>
 </ul>

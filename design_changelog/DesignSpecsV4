@@ -1,0 +1,10 @@
+Project: Crayon Symphony
+Design Specifications S4
+Date: 19 Jul, 2012
+
+* Remove all reference & dependencies of $is_logged_in variable from "views/events_register.php". Unauthorized access is already blocked from the controller.
+* Add placeholder for validation errors in "events_register.php". Error variable is identified by $validation_errors. If it exists you should print it out.
+* Remove all links to "Create Thread" & "Create Event"
+* Show 'Account Settings' link to logged in users on the main page. The link should point to "members/"
+* Remove all references & dependence of $is_logged_in from member_cp.php. The Members controller is protected by default, and can not be accessed by anyone who is not authenticated.
+* I've removed the variable $is_logged_in from edit_profile.php. Remove all references and dependencies.

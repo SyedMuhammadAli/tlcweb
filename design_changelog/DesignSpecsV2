@@ -1,0 +1,28 @@
+Project: Crayon Symphony
+Design Specifications S2
+Date: 18 Jul, 2012
+
+$is_logged in is the standard variable to check if the user is logged in or not. Any other type of authentication
+method should NOT be used inside any file under the "views/" directory.
+
+1) Add a 'phone_num' field inside the form in signup.php
+2) Fix the institutes dropdown list in signup.php with appropriate styles.
+3) Users who are already logged in should not be able to view the signup.php page. Therefore, I'll block it's access from the controller. Remove all code that will become useless after that. Anything that is blocked by the condition using $is_logged_in will become useless.
+4) Create a new view named "cms_message_view.php" under "views/" to display all sorts of error messages. I'll utilize it in my code.
+5) Change 'Recent Events' heading to 'Upcoming Events'
+6) On the homepage add a "space" between admin and the month => "Posted by adminJuly 15, 2012, 3:26 am| Comments"
+7) Click on any topic on the homepage. In the showtopic.php it displays the author id instead of the author name => "Posted by 1 July 15, 2012, 3:26 am"
+8) rename the file "view/viewevents.php" to "view/events_list.php" to remove ambiguity.
+9) Add theme layout to view_event.php
+10) Add a register link in view_event.php with url: "events/register/{$event_id}"
+12) Create a new view "events_view.php" and leave it blank for now. We'll use it as our events homepage.
+
+~Create new view "view/events_register_view.php"
+
+teammate_one (input field)
+teammate_two (input field)
+alt_contact (input field)
+extra_info (text_area)
+
+Form posts data to "events/register/{$event_id}"
+//end of "events_register.php"

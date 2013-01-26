@@ -1,0 +1,54 @@
+Project: Crayon Symphony
+Design Specifications 
+Date: 18 Jul, 2012
+
+$is_logged in is the standard variable to check if the user is logged in or not. Any other type of authentication
+method should NOT be used inside any file under the "views/" directory.
+
+
+~Filename: edit_profile.php
+
+URL: "members/edit"
+
+fb_user_name
+phone_num
+website_link
+email_addr
+
+All are input fields.
+Form posts data to "members/edit/done"
+Validation errors (if exists) will be present inside the $validation_errors variable.
+To check if form had errors use the following syntax:
+
+if(isset($validation_errors)){ echo "You screwed up: {$validation_errors}"; } //snippet 1
+
+//filename edit_profile.php specs end//
+
+
+~Create new view named "member_cp.php" under "views/"
+
+URL: "members"
+
+Simple page with three hyperlinks
+
+Hide Profile => "members/hide_profile"
+Edit Profile => "members/edit"
+Change Password => "members/change_password"
+
+//end of member_cp.php specs
+
+
+~Create new view named "change_password.php" under "views/"
+
+URL: "members/change_password"
+
+old_password
+new_password
+new_password2
+
+All are input fields
+Form posts data to "members/change_password"
+Validation errors (if exists) will be present inside the $validation_errors variable. Refer to snippet 1 for usage.
+
+//end of "change_password.php" specs
+

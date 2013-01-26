@@ -2,28 +2,11 @@
 
 class Tlc_model extends CI_Model{
 	
-	private $cipher_authlock_salt = "35n8d8sakf66y..j9fnfivsi@iqm_21w9j=chs";
-	private $cipher_authkey_salt = "3wjw#1,=+800.ctk+8-fghao6pp7t7giy9zlz_";
-	private $cipher_authkey = "l2ddd2k7+590.1z5s5udto7mcq.ndb3.lg5i99";
-	
 	private $uid;
 	
 	function __construct(){
 		parent::__construct();
-		$this->load->library('encrypt');
 		$this->uid = $this->get_user_id();
-	}
-	
-	//Returns cipher keys, currently hard coded
-	function get_cipher_key($arg){
-		switch($arg){
-			case 1:
-				return $this->cipher_authlock_salt; //lock slat
-			case 2:
-				return $this->cipher_authkey_salt; //key salt
-			case 3:
-				return $this->cipher_authkey; //key
-		}
 	}
 	
 	function create_user(){
@@ -55,20 +38,16 @@ class Tlc_model extends CI_Model{
 	function get_profile($id){
 		/* Fetching profile information */
 		$this->db->select(" members.usr,
-							members.fb_usr,
 							members.firstname,
 							members.lastname,
-							members.web_link,
 							members.email,
 							members.contact_num,
 							members.hidden,
 							members.active,
-							departments.name AS department_name,
-							institutes.name AS institute_name");
+							departments.name AS department_name");
 		
 		$this->db->from("members");
 		
-		$this->db->join("institutes", "members.inst_id = institutes.id");
 		$this->db->join("departments", "members.dept_id = departments.id");
 		
 		$this->db->where("members.id", $id);
@@ -92,7 +71,7 @@ class Tlc_model extends CI_Model{
 	}
 	
 	function get_editable_from_profile(){
-		$this->db->select("fb_usr, web_link, contact_num, email, hidden");
+		$this->db->select("contact_num, email, hidden");
 		$this->db->from("members");
 		$this->db->where(array('id' => $this->uid));
 		
@@ -257,15 +236,6 @@ class Tlc_model extends CI_Model{
 	//decript session data
 	function is_user_logged_in(){
 		return $this->session->userdata('auth_key');
-		
-		/* EXPERIMENTAL CODE
-		$key = $this->session->userdata('auth_key');
-		
-		if($this->encrypt->decode($key, $this->cipher_authkey_salt) == $this->cipher_authkey){
-			return true;
-		} else {
-			return false;
-		}*/
 	}
 	
 	function get_username(){
@@ -274,7 +244,7 @@ class Tlc_model extends CI_Model{
 		if($user == false){
 			return false;
 		} else {
-			return $this->encrypt->decode($user, $this->cipher_authlock_salt);
+			return $user;
 		}
 	}
 }

@@ -1,0 +1,21 @@
+Project: Crayon Symphony
+Design Specifications S5
+Date: 23 Jul, 2012
+
+*There are two errors on the "views/view_event.php" page. Remove variables that are causing those errors. Those variables do not belong on that page.
+*Move the "About" in the "views/view_event.php" to the right sidebar with the label "About" on its top.
+*Temporarily comment out the "Rules" in "views/view_event.php" and add a hyperlink with text "Rules and Regulations" to hold its place.
+*The dark grey heading area where you're putting the event name, change that to say "Event Profile" instead. Add the event name along with the other fields in the body.
+*Try to increase the event name font size to something VERY NOTICABLE with dark gray color. Try 48px (yes 48!) if that doesnt work add of subtact 12 to see what you can get.
+*Add CSS to turn Register into a hover button with rounded edges, bigger font, and strong bg color. (Try black for the background, see if that works)
+*There's a variable named $registration_allowed which is set to false if the registration for that event is not opened yet. Print appropriate error message if that's the case. Usage Example: $registration_allowed ? echo "I'm a button" : "I'm a msg b/c registration is closed";
+*Replace the text "Organizers" with "Event Team"
+*Add a hyperlink named "Find event on facebook"
+*Create a view named "event_timeline.php" under the "views/" directory.
+*Replace "Designed and Developed by ..." from the footer from all pages with "Powered by Crayon Symphony v1.0".
+*Remove "Recent Post, Above Posts" from footer - All pages.
+*Remove "Create Event" from the dropdown when logged in.
+*Remove the "Profile" button from the menu from all views. Replace that with "Account Settings" in it's place.
+*Remove all options to create thread, create event from all pages regardless of weather the user is logged in or not. We'll transfer those features to the admin's panel.
+*Switch positions of the "Stats Box" and the "Upcomming Events Box" on the homepage. Increase the font size of stats text to 48+ px, dark gray, bold.
+*When you click on a topic on the homepage the line below the title says "Posted by 1 July 14, 2012, 6:26 pm". Fix it.

@@ -1,0 +1,25 @@
+Project: Crayon Symphony
+Design Specifications S3
+Date: 19 Jul, 2012
+
+
+*Fix width of institute dowpdown list in view/signup.php. Also align it with other fields.
+
+
+//Modify views/view_event.php as per the following specs
+
+New Variable List:
+$event_id, $event_name, $event_about, $event_rules, $event_date
+$creator_id, $creator_name
+
+Remove all references & dependencies to $is_logged_in variable. No one who is not logged in is supposed to view this page. I'll print appropriate error message using cms_message_page.php view from the controller.
+
+//end of "view_event.php" changes//
+
+
+//MODIFY ALL REFERENCES TO
+
+1) events/upcomingevents with "events/timeline/future"
+2) events/pastevents with "events/timeline/past"
+
+//END OF (MODIFY ALL)

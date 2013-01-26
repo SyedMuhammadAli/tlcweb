@@ -2,8 +2,8 @@
 
 class events extends CI_Controller{
 	private		$total_threads,
-			$total_comments,
-			$total_members;
+				$total_comments,
+				$total_members;
 	
 	function __construct(){
 		parent::__construct();
@@ -36,22 +36,22 @@ class events extends CI_Controller{
 		if($evt == false){
 			die("<strong>Invalid Event Id</strong>");
 		} else {
-			//get event comments
-			$evt['comments'] = $this->events_model->get_event_comments($event_id);
+			$data['title'] = "The Literary Club - View Event";
+			$data['comments'] = $this->events_model->get_event_comments($event_id);
+			$data['organizers'] = $this->events_model->get_event_organizers($event_id);
+			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+			$data = $data + $evt;
 			
-			//get event organizers
-			$evt['organizers'] = $this->events_model->get_event_organizers($event_id);
-			
-			//login info
-			$evt['is_logged_in'] = $this->tlc_model->is_user_logged_in();
-
 			//load view
-			$this->load->view('view_event', $evt);
+			$this->load->view('view_event', $data);
 		}
 	}
 	
-	function upcomingevents(){
-		$evt['events'] = $this->events_model->get_upcoming_events();
+	function timeline($time){
+		if($time != "future" && $time != "past"){ return; } //ADD APPROPRIATE ERROR MSG HERE
+		
+		$evt['events'] = $time == "future" ? $this->events_model->get_upcoming_events() : $this->events_model->get_past_events();
+		
 		$evt['title'] = "The Literary Club - Upcomming Events";
 		
 		$evt['total_threads'] = $this->total_threads;
@@ -60,26 +60,11 @@ class events extends CI_Controller{
 		
 		$evt['is_logged_in'] = $this->tlc_model->is_user_logged_in();
 
-		$this->load->view("viewevents", $evt);
-	}
-
-	function pastevents(){
-		$evt['events'] = $this->events_model->get_past_events();
-		$evt['title'] = "The Literary Club - Past Events";
-		
-		$evt['total_threads'] = $this->total_threads;
-		$evt['total_comments'] = $this->total_comments;
-		$evt['total_members'] = $this->total_members;
-		
-		$evt['is_logged_in'] = $this->tlc_model->is_user_logged_in();
-
-		$this->load->view("viewevents", $evt);
+		$this->load->view("events_list", $evt);
 	}
 	
 	function comment(){
-		$profile = $this->tlc_model->get_profile();
-		
-		$this->events_model->post_comment($profile['user_id'],
+		$this->events_model->post_comment($this->tlc_model->get_user_id(),
 											$this->input->post('event_id'),
 											$this->input->post('text'));
 		
@@ -87,44 +72,43 @@ class events extends CI_Controller{
 	}
 	
 	function register($event_id){
-		if(!$this->tlc_model->is_user_logged_in()){
-			die("<h2>You must be logged in to register for events. " . anchor("home/", "Click here") . " to log in </h2>");
-		}
-		
-		if(!$this->events_model->registration_allowed($event_id)){ //currently allowed is set to 0. Fix taht!
+		if($this->events_model->registration_allowed($event_id)){ //currently allowed is set to 0. Fix taht!
 			die("<h2>Either the registration for this event is not yet enabled, or the event does not exist.</h2>");
-		}
+		} //end validation
 		
 		if($this->input->post("submit")){ //submit will be false if not set
 			$this->load->library('form_validation');
 			
-			$this->form_validation->set_rules("teammate_one", "Teammate 1", "trim|max_length[24]");
-			$this->form_validation->set_rules("teammate_two", "Teammate 2", "trim|max_length[24]");
-			$this->form_validation->set_rules("alt_contact", "Alternate Contact No.", "trim|required|numeric");
-			$this->form_validation->set_rules("extra_info", "Extra Information", "trim");
+			$this->form_validation->set_rules("inst_id", "Institute Id", "trim|required|numeric");
+			$this->form_validation->set_rules("team_name", "Team Name", "trim|required|alpha|max_length[20]");
+			$this->form_validation->set_rules("participants_name", "participants_name", "trim|required|min_length[3]|max_length[50]");
+			$this->form_validation->set_rules("contact", "Contact", "trim|required|min_length[8]|max_length[12]");
+			$this->form_validation->set_rules("alt_contact", "Alternate Contact", "trim|required|min_length[8]|max_length[12]");
+			$this->form_validation->set_rules("email", "Email address", "trim|required|valid_email");
 			
 			if($this->form_validation->run() == false){
-				redirect("events/register/{$event_id}");
+				print_r($_POST);
+				echo validation_errors("Validation Errors: ");
+				//redirect("events/register/{$event_id}");
 			} else {
-				$this->events_model->register_team(	$this->tlc_model->get_user_id(),
-													$event_id,
-													$this->input->post("teammate_one"),
-													$this->input->post("teammate_two"),
+				$this->events_model->register_team(	$event_id,
+													$this->input->post("inst_id"),
+													$this->input->post("team_name"),
+													$this->input->post("participants_name"),
+													$this->input->post("contact"),
 													$this->input->post("alt_contact"),
-													$this->input->post("extra_infos") );
+													$this->input->post("email") );
 				
 				echo "<h2>Thank you for registering. " . anchor("home", "Click here") . " to go back.</h2>";
 			}
 		} else {
-			echo "You don't need to add you name. You'll automatically be added to our db. <br/>";
-			echo form_open("events/register/{$event_id}") . "<br />";
-			echo form_input("teammate_one", "Teammate 1") . "<br />";
-			echo form_input("teammate_two", "Teammate 2") . "<br />";
-			echo form_input("alt_contact", "Alternate Cotnact") . "<br />";
-			echo form_textarea("extra_info", "Extra Info") . "<br />";
-			echo form_submit("submit", "Register for this event!");
-			echo form_close();
-			//die("<h2>Our code monkeys are confused. Please report error code: ERD2 to the webmaster.</h2>");
+			$data['title'] = "The Literary Club - Event Registration";
+			$data['validation_errors'] = validation_errors();
+			$data['event_id'] = $event_id;
+			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+			$data['institute_array'] = $this->tlc_model->get_institute_array();
+			
+			$this->load->view("events_register", $data);
 		}
 	}
 	

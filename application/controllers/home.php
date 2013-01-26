@@ -27,6 +27,21 @@
  * 		why differennt from facebook, twitter
  * 		why on this web?
  * Add society affiliations (student society groups) - needs refining: student social network
+ * 
+ * Bugs:
+ * If there are no upcomming events. There are errors on line 78, 79
+ * 
+ * RC1 TODO:
+ * Add event registration link to homepage below the event date.
+ * Remove "User Registration" from the homepage.
+ * Keep the header and footer in seprate header.php, and footer.php files.
+ * Remove all instances of 'create thread' and 'create event' buttons from all pages.
+ * Remove dummy image placeholder from showtopic.php view.
+ * Fix design of Events profile page.
+ * Fix design of Event registration page.
+ * Add something to the right sidebar of the showtopic.php that makes sense.
+ * Teams are not an entity. The system only keeps records as statis - non linking
+ * independent entity.
  */
 
 error_reporting(E_ALL | E_STRICT);
@@ -44,7 +59,6 @@ class Home extends CI_Controller {
 		$this->load->model('events_model');
 		$this->load->library('pagination');
 		$this->load->library('table');
-		$this->load->library('encrypt');
 		
 		//fix
 		$this->total_threads = $this->tlc_model->total_threads();
@@ -73,7 +87,6 @@ class Home extends CI_Controller {
 		//get event info
 		$nxt_evt = $this->events_model->get_next_event();
 		
-		
 		$info['event_name'] = $nxt_evt['name'];
 		$info['event_id'] = $nxt_evt['id'];
 		$info['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
@@ -88,7 +101,7 @@ class Home extends CI_Controller {
 		
 		$info['page_links'] = $this->pagination->create_links();
 		
-		$this->load->view('welcome', $info);
+		$this->load->view('home_view', $info);
 	}
 	
 	/* Returns a string of the time remaining in d-h-m format using a unix timestamp */
@@ -110,14 +123,14 @@ class Home extends CI_Controller {
 		redirect("home/showtopic/2");
 	}
 	
-	function login(){
+	function login(){ //already logeed in user can't view this
 		if(!$this->input->post("submit")){
 			die("<h4>You can't access this page directly.</h4>");
 		}
 		
 		if($this->tlc_model->login_user()){
 			$data = array(
-				'auth_lock' => $this->encrypt->encode($this->input->post('username'), $this->tlc_model->get_cipher_key(1)),
+				'auth_lock' => $this->input->post('username'),
 				'auth_key'	=> true
 			);
 			
@@ -129,6 +142,16 @@ class Home extends CI_Controller {
 			echo anchor("home/", "[Home]") . "  ";
 			echo anchor("home/login", "[Login]");
 		}
+	}
+	
+	function participant_login(){
+		/* Participant Teams Login
+		 * 
+		 * If event not active - print error.
+		 * If team not enabled - print error.
+		 * If password incorrect - print error.
+		 * else allow uploading pdf/doc/txt.
+		 * */
 	}
 	
 	function logout(){
@@ -207,6 +230,8 @@ class Home extends CI_Controller {
 	}
 	
 	function signup($arg = ""){
+		//BLOCK ACCESS IS USER IS ALREADY LOGGED IN
+		
 		$data['title'] = "The Literary Club - Signup";
 		
 		//stats
@@ -227,8 +252,8 @@ class Home extends CI_Controller {
 			$this->form_validation->set_rules("password2", "Password Confirmation", "trim|required|matches[password]");
 			$this->form_validation->set_rules("firstname", "First Name", "trim|required|alpha|max_length[24]");
 			$this->form_validation->set_rules("lastname", "Last Name", "trim|required|alpha|max_length[24]");
-			$this->form_validation->set_rules("institute", "Last Name", "trim|required|numeric");
-			$this->form_validation->set_rules("phone_num", "Last Name", "trim|required|min_length[8]|max_length[13]|numeric");
+			$this->form_validation->set_rules("institute", "1", "trim|required|numeric");
+			$this->form_validation->set_rules("phone_num", "Only numbers", "trim|required|min_length[8]|max_length[13]|numeric");
 			$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email|max_length[48]");
 			
 			$already_exists = $this->tlc_model->userexist($this->input->post('username'),

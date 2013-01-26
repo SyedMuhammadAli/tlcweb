@@ -5,7 +5,7 @@ class Members extends CI_Controller{
 				$total_comments,
 				$total_members;
 	
-	private		$is_logged_in = array();
+	private		$is_logged_in;
 	
 	function __construct(){
 		parent::__construct();
@@ -22,19 +22,13 @@ class Members extends CI_Controller{
 	}
 	
 	function index(){
-		echo "<h3>Profile Control Panel, ". $this->tlc_model->get_username() . "</h3>";
-		echo anchor('home/index', 'Home'); echo "<br>";
-		echo anchor('members/post', "Create a Thread"); echo "<br>";
-		echo anchor('members/profile', "View Profile"); echo "<br>";
-		echo anchor('home/logout', "Logout"); echo "<br>"; echo "<br>"; echo "<br>";
-	
-		//$this->load->view('member_cp', $data);
+		$data['title'] = "The Literary Club - Account Settings";
+		$this->load->view('member_cp', $data);
 	}
 	
 	//added 16 jul 12
 	function edit($arg = ""){
 		$data['title'] = "The Literary Club - Edit Profile";
-		$data['is_logged_in'] = $this->is_logged_in;
 		
 		if($arg == "done" && $this->input->post("submit")){
 			$this->load->library("form_validation");
@@ -65,7 +59,7 @@ class Members extends CI_Controller{
 	}
 	
 	function change_password(){
-		$data['title'] = "The Literary Club - Change Profile";
+		$data['title'] = "The Literary Club - Change Password";
 		
 		if($this->input->post("submit")){
 			$this->load->library("form_validation");
@@ -76,7 +70,7 @@ class Members extends CI_Controller{
 			
 			if($this->form_validation->run() == false){
 				$data["validation_errors"] = validation_errors();
-				//$this->load->view("members/change_password", $data);
+				//$this->load->view("change_password", $data);
 			} else {
 				if($this->tlc_model->validate_password($this->input->post("old_password"))){
 					$this->tlc_model->change_password_to($this->input->post("new_password"));
@@ -84,15 +78,7 @@ class Members extends CI_Controller{
 				}
 			}
 		} else {
-			//tmp form
-			echo validation_errors();
-			echo form_open("members/change_password");
-			echo form_password("old_password", "254136");
-			echo form_password("new_password", "587469");
-			echo form_password("new_password2", "587469");
-			echo form_submit("submit", "Change");
-			echo form_close();
-			//$this->load->view("m_change_pswd", $data);
+			$this->load->view("change_password", $data);
 		}
 	}
 	
@@ -105,9 +91,6 @@ class Members extends CI_Controller{
 		$data['total_threads'] = $this->total_threads;
 		$data['total_comments'] = $this->total_comments;
 		$data['total_members'] = $this->total_members;
-
-		//login info
-		$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
 
 		if(!$this->input->post("submit")){
 			$data['title'] = "The Literary Club - Topic";

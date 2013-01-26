@@ -185,6 +185,7 @@ class Home extends CI_Controller {
 			//Load view
 			$data['title'] = "The Literary Club - Show Topic";
 			$data['post'] = $query->row_array();
+			$data['author_name'] = $this->tlc_model->get_user_by_id($data['post']['author_id']);
 			$data['comments'] = $comments_query;
 			$data['thread_id'] = $thread_id;
 			$data['page_links'] = $this->pagination->create_links();

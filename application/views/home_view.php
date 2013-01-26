@@ -67,7 +67,7 @@
 							<div id="content-top-shadow">
 								<div id="content-bottom-shadow">
 									<div id="second-menu" class="clearfix">										
-                                    	<?php include("menu.html"); ?>								
+                                    	<?php include("menu.php"); ?>								
 									</div> <!-- end #second-menu -->
 									<!---- Slider Start ---------->
 									<div id="featured" class="flexslider et_slider_auto et_slider_speed_7000">

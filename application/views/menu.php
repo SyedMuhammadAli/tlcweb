@@ -6,11 +6,9 @@
 		<?php echo anchor("events/index", "Events"); ?>
 		<ul class="sub-menu">
 			<?php if($is_logged_in):?>
-			<?php if($is_logged_in):?>
 			<li>
-				<?php echo anchor("events/create","Create Event");?>
+				<?php //echo anchor("events/create","Create Event");?>
 			</li>
-			<?php endif?>
 			<?php endif?>
 			<li>
 				<?php echo anchor("events/timeline/future","Upcoming Events");?>

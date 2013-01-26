@@ -2,11 +2,11 @@
 			<div class="container">
 				<div id="footer-widgets" class="clearfix">
 					<div id="recent-posts-7" class="footer-widget widget_recent_entries">		
-                        <h4 class="widgettitle"><?php echo "Above Posts" ?></h4>		
+                        <h4 class="widgettitle"><?php echo "Recent Posts" ?></h4>		
                         <ul>
-                           	<?php foreach($records->result() as $blogpost): ?>
-                           	<li><?php echo anchor("home/showtopic/{$blogpost->post_id}", "$blogpost->title");?></li>
-                           	<?php endforeach; ?>
+                           	<?php //foreach($records->result() as $blogpost): ?>
+                           	<li><?php //echo anchor("home/showtopic/{$blogpost->post_id}", "$blogpost->title");?></li>
+                           	<?php //endforeach; ?>
 						</ul>
 					</div><!--end.recent-posts-7-->
       	            <div id="recent-comments-7" class="footer-widget widget_recent_comments"><h4 class="widgettitle"><?php echo "Recent Comments" ?></h4>
@@ -20,7 +20,7 @@
          				</ul>
          			</div><!--end.recent-posts-7->
          		</div> <!-- end .footer-widget -->
-        		<p id="copyright"><?php echo "Developed by TLC WebDev Dept." ?> </p>
+        		<p id="copyright">Developed by TLC WebDev Dept.</p>
            	</div> <!-- end .container -->
 		</div> <!-- end #footer-top-shadow -->
 		<div id="footer-bottom-shadow"></div>
@@ -28,7 +28,7 @@
 			<div class="container clearfix">
 				<ul id="bottom-nav" class="bottom-nav">
                 	<li><?php echo anchor('home','Home');?></li>
-                    <li><?php echo anchor('https://www.facebook.com/TLCFAST','FB Page');?></li>
+                	<li><?php echo anchor('home/#', 'Member Login')?>
                     <li><?php echo anchor('home/contact','Contact Us');?></li>
                     <li><?php echo anchor('home/about','About Us');?></li>
                     <li><?php echo anchor('#sitemap','Sitemap');?></li>

@@ -60,7 +60,7 @@
 							<div id="content-top-shadow">
 								<div id="content-bottom-shadow">
 									<div id="second-menu" class="clearfix">										
-                                    	<?php include("menu.html"); ?>						
+                                    	<?php include("menu.php"); ?>						
 									</div> <!-- end #second-menu -->
                              	<div id="main-content" class="clearfix">
                                 	<div id="left-area">
@@ -135,6 +135,4 @@
 	?>
 
 </body>
-</html>	
-</body>
-</html>	
+</html>

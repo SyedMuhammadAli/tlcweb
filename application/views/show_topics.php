@@ -60,7 +60,7 @@
 							<div id="content-top-shadow">
 								<div id="content-bottom-shadow">
 									<div id="second-menu" class="clearfix">										
-                                    	<?php include("menu.html"); ?>								
+                                    	<?php include("menu.php"); ?>								
 									</div> <!-- end #second-menu -->
                               	<div id="main-content" class="clearfix">
                                     	<div id="left-area">
@@ -72,7 +72,7 @@
                                                     <h1 class="title"><?php echo $post['title'];?></h1>
                                                     <div class="post-meta">
                                                         <p class="meta-info">
-                                                        <?php echo "Posted  by "?><?php echo anchor('home/profile/'.$post['author_id'],$post['author_id']);?>
+                                                        <?php echo "Posted  by "?><?php echo anchor('home/profile/'.$post['author_id'],$author_name);?>
                                                    <?php echo date("F j, Y, g:i a", strtotime($post['time']));?>
                                                         </p>
                                                     </div> <!-- end .post-meta -->

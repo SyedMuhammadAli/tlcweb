@@ -247,4 +247,12 @@ class Tlc_model extends CI_Model{
 			return $user;
 		}
 	}
+	
+	function get_user_by_id($user_id){
+		$this->db->select("usr");
+		$this->db->from("members");
+		$this->db->where("id", $user_id);
+		
+		return $this->db->get()->row()->usr;
+	}
 }

@@ -150,10 +150,10 @@ class Tlc_model extends CI_Model{
 	}
 	
 	function post_news(){
-		$profile = $this->get_profile();
+		$profile = $this->get_profile($this->get_user_id());
 		
 		//check permission to post
-		$this->db->where("user_id", $profile["user_id"]);
+		$this->db->where("user_id", $this->get_user_id());
 		$permission = $this->db->get("permission")->row_array();
 		
 		//Author has clearence lvl 4
@@ -165,7 +165,7 @@ class Tlc_model extends CI_Model{
 			$data = array(
 						"title" => $this->input->post("title"),
 						"post" => nl2br_except_pre( $this->input->post("text") ),
-						"author_id" => $profile["user_id"]
+						"author_id" => $this->get_user_id()
 			);
 			
 			$this->db->insert("posts", $data);

@@ -97,7 +97,8 @@ class Members extends CI_Controller{
 		$data['total_threads'] = $this->total_threads;
 		$data['total_comments'] = $this->total_comments;
 		$data['total_members'] = $this->total_members;
-
+		$data['is_logged_in'] = $this->is_logged_in;
+		
 		if(!$this->input->post("submit")){
 			$data['title'] = "The Literary Club - Topic";
 			$this->load->view('post', $data);
@@ -113,9 +114,9 @@ class Members extends CI_Controller{
 	}
 	
 	function comment(){
-		$profile = $this->tlc_model->get_profile();
+		$profile = $this->tlc_model->get_profile($this->tlc_model->get_user_id());
 		
-		$this->tlc_model->post_comment($profile['user_id'], $this->input->post('thread_id'), $this->input->post('text'));
+		$this->tlc_model->post_comment($this->tlc_model->get_user_id(), $this->input->post('thread_id'), $this->input->post('text'));
 		
 		redirect("home/showtopic/".$this->input->post('thread_id'));
 	}

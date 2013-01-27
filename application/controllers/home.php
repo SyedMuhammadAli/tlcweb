@@ -87,10 +87,15 @@ class Home extends CI_Controller {
 		//get event info
 		$nxt_evt = $this->events_model->get_next_event();
 		
+		if(count($nxt_evt) != 0):
+		$info['upcoming_event_exists'] = true;
 		$info['event_name'] = $nxt_evt['name'];
 		$info['event_id'] = $nxt_evt['id'];
 		$info['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
 		$info['registration_allowed'] = $nxt_evt['registration_allowed'];
+		else:
+		$info['upcoming_event_exists'] = false;
+		endif;
 		
 		//stats
 		$info['total_threads'] = $this->total_threads;
@@ -196,10 +201,15 @@ class Home extends CI_Controller {
 			
 			//login info
 			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
-		
+			
+			if(count($nxt_evt) != 0):
+			$data['upcoming_event_exists'] = true;
 			$data['event_name'] = $nxt_evt['name'];
 			$data['event_id'] = $nxt_evt['id'];
 			$data['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
+			else:
+			$data['upcoming_event_exists'] = false;
+			endif;
 			
 			$this->load->view('show_topics', $data);
 		} else {
@@ -259,7 +269,7 @@ class Home extends CI_Controller {
 			}
 			
 			if($this->form_validation->run() == FALSE){
-				$data['error'] = "Form Validation Failed.";
+				$data['error'] = "Validation Error: " + validation_errors();
 				$this->load->view("signup", $data);
 				return;
 			} else {

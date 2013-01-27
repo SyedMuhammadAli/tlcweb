@@ -110,6 +110,7 @@ function eventListChangeListener(){
         	<ul>
             	<a href=<?php echo base_url(); ?>><li>Home</li></a>
                 <a href=<?php echo base_url("index.php/admin/"); ?>><li>Admin Panel</li></a>
+                <a href=<?php echo base_url("index.php/home/logout"); ?>>Logout</a>
             </ul>
         </div>
         <div id="logo-panel"><?php echo img(array('src'=>'images/logo.png', 'alt' => 'Logo', 'href'=>'http://www.tlc.net46.net','id'=>'logo'));?></div>
@@ -129,6 +130,8 @@ function eventListChangeListener(){
                     	<li><?php echo anchor("admin/events", "Events"); ?></li>
                     	<li><?php echo anchor("admin/tlc_members", "TLC Members"); ?></li>
                     	<li><?php echo anchor("admin/departments", "Departments"); ?></li>
+                    	<li><?php echo anchor("events/create", "Create Event"); ?></li>
+                    	<li><?php echo anchor("members/post", "Create Post"); ?></li>
                     </ul>
                 </div>
             </div>

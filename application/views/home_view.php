@@ -225,7 +225,8 @@
                                             <?php endif; ?>
                                             
                                             <h4 class="main-title widget-title"><?php echo "Upcoming Event"?></h4>
-                                            <div class="widget">	
+                                            <div class="widget">
+                                            	<?php if($upcoming_event_exists): ?>	
                                                 <p><?php echo anchor("events/view/{$event_id}", $event_name); ?></p>
                                                 <p><?php echo $event_countdown_timer; ?></p>
                                                 <p>
@@ -233,6 +234,9 @@
                                                 	<?php if($registration_allowed) echo anchor("events/register/{$event_id}","Register Now"); ?>
                                                 	</h4>
                                                 </p>
+                                                <?php else: ?>
+                                                <p>No upcoming events.</p>
+                                                <?php endif; ?>
                                                 <div class="adwrap">
                                                     <?php echo img(array('href'=>'#','target'=>'_blank','src'=>'uploads/zauq_standee_dark.png','alt'=>'advertisement','title'=>'Next Event'))?>
                                                 </div> <!-- end adwrap -->

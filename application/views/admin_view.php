@@ -41,14 +41,15 @@ class Profile {
 	}
 	
 	function getActionUrl(){
-		$action_uri = "index.php/admin/";
+		$action_uri = "/apricot/index.php/admin/";
 		
 		switch($this->caller){
 			case "members":
 				$action_uri .= "members/" . ($this->obj->active ? "deactivate" : "activate") . "/{$this->obj->id}";
 				break;
 			case "teams":
-				return "action/t";
+				$action_uri .= "team_operation/" . ($this->obj->active ? "deactivate" : "activate") . "/{$this->obj->id}";
+				return $action_uri;
 			case "events":
 				$action_uri .= "events/" . ($this->obj->registration_allowed ? "deactivate" : "activate") . "/{$this->obj->id}";
 				break;
@@ -56,7 +57,7 @@ class Profile {
 				return "action/d";
 		}
 		
-		return base_url($action_uri);
+		return $action_uri;
 	}
 	
 	function isActive(){
@@ -69,7 +70,6 @@ class Profile {
 			case "departments":
 				return "action/d";
 		}
-		
 	}
 	
 	function getButton(){
@@ -84,14 +84,26 @@ class Profile {
 
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php echo link_tag(array('href' => 'css/admin_styles.css', 'rel' => 'stylesheet', 'type' => 'text/css', 'media' => 'screen' )); ?>
 <title>Admin Panel</title>
-</head>
+<script>
+function eventYearChangeListener(){
+	var s = document.getElementById("event_selector");
+	var selectorValue = s.options[s.selectedIndex].text;
+	window.location = "http://localhost/apricot/index.php/admin/events/" + selectorValue;
+}
 
+function eventListChangeListener(){
+	var s = document.getElementById("event_list");
+	var selectorValue = s.options[s.selectedIndex].value;
+	window.location = "http://localhost/apricot/index.php/admin/teams/" + selectorValue;
+}
+</script>
+</head>
 <body>
 	<div id="container">
     	<div id="header">
@@ -107,7 +119,7 @@ class Profile {
                 	<a href=<?php echo base_url("index.php/members"); ?>><li>Account Settings</li></a>
                     <a href=<?php echo base_url("index.php/admin"); ?>><li class="active-list-left">System Settings</li></a>
                 </ul>
-            </div>
+        	</div>
             <div id="left-panel">
             	<div class="heading">CMS</div>
                 <div id="menu">
@@ -115,6 +127,7 @@ class Profile {
                     	<li><?php echo anchor("admin/members", "Members"); ?></li>
                     	<li><?php echo anchor("admin/teams", "Teams"); ?></li>
                     	<li><?php echo anchor("admin/events", "Events"); ?></li>
+                    	<li><?php echo anchor("admin/tlc_members", "TLC Members"); ?></li>
                     	<li><?php echo anchor("admin/departments", "Departments"); ?></li>
                     </ul>
                 </div>
@@ -124,7 +137,7 @@ class Profile {
 					<?php
 						$p = new Profile($page);
 						foreach($record->result() as $r):
-							$p->setRecord($r);							
+							$p->setRecord($r);
 					?>
 					
 					<li>
@@ -134,23 +147,28 @@ class Profile {
 					
 					<?php endforeach;
 						if($record->num_rows() == 0){
-							echo "No. Nothing. Nada...";
+							echo "No records found...";
 						}
 					?>
 				</ul>
 				<div style="text-align:center; background:#ccc;">
 				<?php
 					if($page == "members") echo $page_links;
-					if($page == "events"){
-						echo anchor("admin/events/2011", "2011") . "     " .
-							anchor("admin/events/2012", "2012") . "     " .
-							anchor("admin/events/2014", "2014");
-					} 
+					
+					switch($page){
+						case "events":
+						echo form_dropdown("event_year", array(null, 2010, 2011, 2012, 2013, 2014), 2013, "id='event_selector' onChange='eventYearChangeListener();'");
+						break;
+						
+						case "teams":
+						echo form_dropdown("event_list", array(null => null)+$event_list, current($event_list), "id='event_list' onChange='eventListChangeListener();'");
+						break;
+					}
 				?>
 				</div>
 			</div>
         </div>
-        <div id="footer">Copyright The Literary Club 2012</div>
+        <div id="footer">Developed by TLC WebDev</div>
     </div>
 </body>
 </html>

@@ -34,8 +34,17 @@ class Admin_model extends CI_Model{
 		$this->db->update('events', $data);
 	}
 	
-	function activate_team($team_id) {}	//left the implementation blank for now
-	function decativate_team($team_id) {}	//left the implementation blank for now
+	function activate_team($team_id){
+		$data = array("active" => 1);
+		$this->db->where("id", $team_id);
+		$this->db->update("participant_teams", $data);
+	}
+	
+	function deactivate_team($team_id) {
+		$data = array("active" => 0);
+		$this->db->where("id", $team_id);
+		$this->db->update("participant_teams", $data);
+	}
 	
 	function add_department($dept_name)
 	{
@@ -77,28 +86,33 @@ class Admin_model extends CI_Model{
 		return $this->db->get('members', $per_page, $uri_segment);
 	}
 	
+	/* Return the teams associated with the event_id.
+	 * */
 	function get_teams($per_page, $uri_segment, $event_id=NULL){
-		$this->db->select("id, team_name, active");
+		if($event_id == NULL) $event_id = 1;
 		
-		if($event_id != NULL){
-			$this->db->where( array('event_id', $event_id) );
-		} else {
-			//$this->db->where( array('event_id', 1) );
-		}
+		$this->db->select("id, team_name, active");
+		$this->db->where("event_id", $event_id);
 		
 		return $this->db->get("participant_teams");
 	}
 	
+	/* Returns the events of the current year.
+	 * If year is passed as an argument then
+	 * it returns the list of events for that year.
+	 * */
 	function get_events($year = NULL ){
 		if($year == NULL)
 			$year = date("Y", time());
 		
-		$this->db->where("event_date >", mktime(0,0,0,1,1,$year));
-		$this->db->where("event_date <", mktime(0,0,0,12,31,$year));
+		$this->db->where("event_date >", mktime(0,0,0,1,1,intval($year)));
+		$this->db->where("event_date <", mktime(0,0,0,12,31,intval($year)));
 		
 		return $this->db->get("events"); 
 	}
 	
+	/* Returns all departments.
+	 * */
 	function get_departments(){
 		return $this->db->get("departments");
 	}

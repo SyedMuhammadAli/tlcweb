@@ -114,6 +114,4 @@
 	?>
 
 </body>
-</html>	
-</body>
-</html>	
+</html>

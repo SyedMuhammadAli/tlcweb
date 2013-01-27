@@ -11,7 +11,7 @@
 	<?php
 		echo form_open("events/edit/{$event_id}/done");
 		
-		echo "<p>Name: " . form_input("name", set_value("Event Name", $name)) . "</p>";
+		echo "<p>Name: " . form_input("name", set_value("Event Name", $event_name)) . "</p>";
 		
 		sscanf(date("m j Y", $event_date), "%d %d %d", $month, $day, $year);
 		
@@ -22,8 +22,8 @@
 			 "Year: " . form_input("year", set_value("year", $year)) .
 			 "</p>";
 		
-		echo "<p>About: " . form_textarea("about", set_value("about", $about)) . "</p>";
-		echo "<p>Rules: " . form_textarea("rules", set_value("rules", $rules)) . "</p>";
+		echo "<p>About: " . form_textarea("about", set_value("about", $event_about)) . "</p>";
+		echo "<p>Rules: " . form_textarea("rules", set_value("rules", $event_rules)) . "</p>";
 
 		echo form_submit("submit", "Edit Event");
 		

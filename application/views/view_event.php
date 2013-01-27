@@ -79,7 +79,7 @@
                                                 <a><?php echo anchor("home/profile/{$o->member_id}", $o->firstname . " " . $o->lastname); ?></a>
                                                 <?php echo "   "?>
                                                 <?php endforeach; ?>
-                                                <br>
+                                                <br />
                                                 <div id="comment-wrap" class="clearfix">
                                                     <h3 id="comments" class="main-title"><?php echo "Comments"?></h3>
                                                     <ol class="commentlist clearfix">

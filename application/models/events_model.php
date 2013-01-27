@@ -67,7 +67,7 @@ class Events_model extends CI_Model{
 	}
 	
 	function get_next_event(){
-		$this->db->select('id, name, event_date');
+		$this->db->select('id, name, event_date, registration_allowed');
 		$this->db->from('events');
 		$this->db->where("event_date >", time());
 		$this->db->order_by('event_date', 'asc');

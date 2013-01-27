@@ -27,6 +27,10 @@ class Admin extends CI_Controller {
 		redirect("admin/members");
 	}
 	
+	/* Returns list of members from the database if no action is
+	 * specified. Otherwise, it activates or deactivates the user
+	 * based on the action and the user_id passed. 
+	 * */
 	function members($action=NULL, $user_id=NULL){
 		if(is_null($action)){
 			$data['title'] = $this->_title;
@@ -47,11 +51,40 @@ class Admin extends CI_Controller {
 		}
 	}
 	
-	function teams(){
+	function team_operation($action = NULL, $team_id = NULL){
+		switch($action){
+			case "activate":
+				if($team_id == NULL) die("Error ap57");
+				$this->admin_model->activate_team($team_id);
+				$this->teams();
+				break;
+				
+			case "deactivate":
+				if($team_id == NULL) die("Error ap63");
+				$this->admin_model->deactivate_team($team_id);
+				$this->teams();
+				break;
+				
+			default:
+				die("Error ap69");
+		}
+	}
+	
+	function teams($event_id = NULL){
 		$data['title'] = $this->_title;
 		$data['record'] = $this->admin_model->get_teams($this->_perpage,
-														$this->uri->segment($this->_urisegment));
+														$this->uri->segment($this->_urisegment),
+														$event_id);
 		$data['page'] = "teams";
+		
+		$event_list = $this->admin_model->get_events(2013);
+		$tmp_evt_array = array();
+		
+		foreach ($event_list->result() as $event){
+			$tmp_evt_array[$event->id] = $event->name;
+		}
+		
+		$data['event_list'] = $tmp_evt_array;
 		
 		$this->load->view("admin_view", $data);
 	}
@@ -89,6 +122,10 @@ class Admin extends CI_Controller {
 			
 			$this->events();
 		}
+	}
+	
+	function tlc_members(){
+		echo "on todo list";
 	}
 	
 	function accountsettings(){

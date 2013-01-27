@@ -65,7 +65,7 @@
                              	<div id="main-content" class="clearfix">
                                 	<div id="left-area">
                                     	<h1 class="main-title"><?php echo $title?></h1>
-                                        <div><h1><?php if(isset($validation_errors)){ echo "Vadidation Failed: {$validation_errors}"; } ?></h1></div>
+                                        <div class="validation_errors"><h5><?php if(isset($validation_errors)){ echo "Vadidation Errors: {$validation_errors}"; } ?></h5></div>
 										<div id="profile">
 											<?php
                                                 echo form_open("events/register/{$event_id}");

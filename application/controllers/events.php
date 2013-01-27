@@ -80,16 +80,20 @@ class events extends CI_Controller{
 			$this->load->library('form_validation');
 			
 			$this->form_validation->set_rules("inst_id", "Institute Id", "trim|required|numeric");
-			$this->form_validation->set_rules("team_name", "Team Name", "trim|required|alpha|max_length[20]");
+			$this->form_validation->set_rules("team_name", "Team Name", "trim|required|alpha_dash|max_length[20]");
 			$this->form_validation->set_rules("participants_name", "participants_name", "trim|required|min_length[3]|max_length[50]");
 			$this->form_validation->set_rules("contact", "Contact", "trim|required|min_length[8]|max_length[12]");
 			$this->form_validation->set_rules("alt_contact", "Alternate Contact", "trim|required|min_length[8]|max_length[12]");
 			$this->form_validation->set_rules("email", "Email address", "trim|required|valid_email");
 			
 			if($this->form_validation->run() == false){
-				print_r($_POST);
-				echo validation_errors("Validation Errors: ");
-				//redirect("events/register/{$event_id}");
+				$data['title'] = "The Literary Club - Event Registration";
+				$data['event_id'] = $event_id;
+				$data['validation_errors'] = validation_errors();
+				$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+				$data['institute_array'] = $this->tlc_model->get_institute_array();
+				
+				$this->load->view("events_register", $data);
 			} else {
 				$this->events_model->register_team(	$event_id,
 													$this->input->post("inst_id"),
@@ -103,7 +107,6 @@ class events extends CI_Controller{
 			}
 		} else {
 			$data['title'] = "The Literary Club - Event Registration";
-			$data['validation_errors'] = validation_errors();
 			$data['event_id'] = $event_id;
 			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
 			$data['institute_array'] = $this->tlc_model->get_institute_array();
@@ -117,6 +120,8 @@ class events extends CI_Controller{
 		if($this->tlc_model->user_is_admin()){
 			if($arg != "done"){
 				$data['title'] = "The Literary Club - Create Event";
+				$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+				
 				$this->load->view('create_event_form', $data);
 			} else { //if $arg is 'done'
 				$this->load->library('form_validation');
@@ -131,10 +136,12 @@ class events extends CI_Controller{
 				if($this->form_validation->run() == false){
 					$data['error'] = validation_errors();
 					$data['title'] = "The Literary Club - Create Event";
+					$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
 					$this->load->view('create_event_form', $data);
 					return;
 				} else {
 					$profile = $this->tlc_model->get_profile();
+					$profile['id'] = $this->tlc_model->get_user_id();
 					
 					$evt = array(
 						'name' => $this->input->post('name'),
@@ -142,9 +149,9 @@ class events extends CI_Controller{
 						'rules' => $this->input->post('rules'),
 						'creator_id' => $profile['id'],
 						'event_date' => mktime(9, 30, 0,
-											$this->input->post('month'),
-											$this->input->post('day'),
-											$this->input->post('year'))
+										$this->input->post('month'),
+										$this->input->post('day'),
+										$this->input->post('year'))
 					);
 					
 					$this->events_model->create($evt);

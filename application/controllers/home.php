@@ -90,6 +90,7 @@ class Home extends CI_Controller {
 		$info['event_name'] = $nxt_evt['name'];
 		$info['event_id'] = $nxt_evt['id'];
 		$info['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
+		$info['registration_allowed'] = $nxt_evt['registration_allowed'];
 		
 		//stats
 		$info['total_threads'] = $this->total_threads;
@@ -128,7 +129,7 @@ class Home extends CI_Controller {
 			die("<h4>You can't access this page directly.</h4>");
 		}
 		
-		if($this->tlc_model->login_user()){
+		if($this->tlc_model->login_user($this->input->post("username"), $this->input->post("password"))){
 			$data = array(
 				'auth_lock' => $this->input->post('username'),
 				'auth_key'	=> true

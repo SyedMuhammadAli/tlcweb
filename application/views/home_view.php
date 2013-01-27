@@ -228,6 +228,11 @@
                                             <div class="widget">	
                                                 <p><?php echo anchor("events/view/{$event_id}", $event_name); ?></p>
                                                 <p><?php echo $event_countdown_timer; ?></p>
+                                                <p>
+                                                	<h4>
+                                                	<?php if($registration_allowed) echo anchor("events/register/{$event_id}","Register Now"); ?>
+                                                	</h4>
+                                                </p>
                                                 <div class="adwrap">
                                                     <?php echo img(array('href'=>'#','target'=>'_blank','src'=>'uploads/zauq_standee_dark.png','alt'=>'advertisement','title'=>'Next Event'))?>
                                                 </div> <!-- end adwrap -->

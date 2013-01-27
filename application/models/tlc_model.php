@@ -23,9 +23,9 @@ class Tlc_model extends CI_Model{
 		$this->db->insert("members", $account_info);
 	}
 	
-	function login_user(){
-		$this->db->where("usr", $this->input->post("username"));
-		$this->db->where("pswd", md5($this->input->post("password")));
+	function login_user($user, $pass){
+		$this->db->where("usr", $user);
+		$this->db->where("pswd", md5($pass));
 		
 		$query = $this->db->get("members");
 

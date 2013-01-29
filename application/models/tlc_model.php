@@ -122,16 +122,6 @@ class Tlc_model extends CI_Model{
 		return $this->db->get("permission")->row()->level;
 	}
 	
-	function user_is_admin($uid){
-		$permission = $this->get_user_permission($uid);
-		
-		if($permission == 16){ //Admin level is 16
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	function post_news($uid, $title, $text){
 		if($this->get_user_permission($uid) < 4){
 			return false; //if permission not given OR permission level is lower than required

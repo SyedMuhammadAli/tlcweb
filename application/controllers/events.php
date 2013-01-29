@@ -169,7 +169,7 @@ class events extends CI_Controller{
 	}
 	
 	function edit($event_id, $arg = ""){
-		if($this->tlc_model->user_is_admin()){
+		if($this->userauthorization->isUserAdmin()){
 			if($arg != "done"){
 				$data = $this->events_model->get_event($event_id);
 				$data['event_id'] = $event_id;

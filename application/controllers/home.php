@@ -135,7 +135,8 @@ class Home extends CI_Controller {
 				'active' => $profile['active'],
 				'contact' => $profile['contact_num'],
 				'is_logged_in'	=> true,
-				'is_user_admin' => $this->tlc_model->user_is_admin($uid)
+				'is_user_admin' => ($this->tlc_model->get_user_permission($uid) == 16 ? true : false),
+				'is_user_moderator' => ($this->tlc_model->get_user_permission($uid) == 4 ? true : false)
 			);
 			
 			$this->session->set_userdata($data);

@@ -11,8 +11,9 @@ class Admin extends CI_Controller {
 		$this->load->model('tlc_model');
 		$this->load->model('admin_model');
 		$this->load->library('pagination');
+		$this->load->library("userauthorization", array("session_object" => $this->session));
 		
-		if( !$this->tlc_model->user_is_admin() ) //authorize access
+		if( !$this->userauthorization->isUserAdmin() ) //authorize access
 			redirect("/home");
 		
 		$config['base_url'] = "http://localhost/apricot/index.php/admin/";

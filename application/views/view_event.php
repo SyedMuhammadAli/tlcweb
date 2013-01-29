@@ -106,7 +106,7 @@
                                                         </li>
                                                         <?php 
                                                             endforeach; 
-                                                            echo $page_links;
+                                                            //echo $page_links;
                                                         ?>
                                                     </ol>
                                                 	<div id="respond">
@@ -114,9 +114,9 @@
                                                 <?php
                                                     //echo $page_links; //pagination links
                                                 
-                                                        echo form_open('members/comment',array('id'=>'commentform'));
+                                                        echo form_open('events/comment',array('id'=>'commentform'));
                                                         echo form_textarea("text", set_value("text", "Add some text here..."));
-                                                        echo form_hidden("event_id", $id);
+                                                        echo form_hidden("event_id", $event_id);
                                                         echo form_submit("submit", "Comment");
                                                         echo form_close();
                                                     ?>

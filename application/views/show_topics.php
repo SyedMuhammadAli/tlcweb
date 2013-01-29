@@ -81,7 +81,6 @@
                                                         <?php //echo img(array('src'=>'uploads/ad-2-post.gif','class'=>'single-thumb','width'=>'200px', 'height' => '200px','alt'=>'Profile Photo'))?>
                                                         
                                                     </div> 	<!-- end .thumb -->
-                                                     -->
                                                     <p><?php echo $post['post']; ?></p>
                                                     <p>&nbsp;</p>
                                                 </div> <!-- end .entry -->

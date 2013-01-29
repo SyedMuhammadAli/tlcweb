@@ -3,7 +3,7 @@
 		<?php echo anchor("home", "Home");?>
 	</li>
 	<li>
-		<?php echo anchor("events/index", "Events"); ?>
+		<?php echo anchor("#", "Events"); ?>
 		<ul class="sub-menu">
 			<li>
 				<?php echo anchor("events/timeline/future","Upcoming Events");?>

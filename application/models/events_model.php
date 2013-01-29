@@ -41,6 +41,7 @@ class Events_model extends CI_Model{
 		$this->db->select("event_comments.text AS comment, event_comments.time AS time, event_comments.author_id AS profile_id, members.usr AS author");
 		$this->db->from("event_comments, members");
 		$this->db->where("event_comments.author_id = members.id");
+		$this->db->where("event_comments.event_id = {$event_id}");
 		
 		return $this->db->get();
 	}

@@ -10,6 +10,8 @@ class events extends CI_Controller{
 		
 		$this->load->model('tlc_model');
 		$this->load->model('events_model');
+		$this->load->library("userauthorization", array("session_object" => $this->session));
+		
 		
 		//fix
 		$this->total_threads = $this->tlc_model->total_threads();
@@ -39,7 +41,7 @@ class events extends CI_Controller{
 			$data['title'] = "The Literary Club - View Event";
 			$data['comments'] = $this->events_model->get_event_comments($event_id);
 			$data['organizers'] = $this->events_model->get_event_organizers($event_id);
-			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+			$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 			$data = $data + $evt;
 			
 			//load view
@@ -58,13 +60,13 @@ class events extends CI_Controller{
 		$evt['total_comments'] = $this->total_comments;
 		$evt['total_members'] = $this->total_members;
 		
-		$evt['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+		$evt['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 
 		$this->load->view("events_list", $evt);
 	}
 	
 	function comment(){
-		$this->events_model->post_comment($this->tlc_model->get_user_id(),
+		$this->events_model->post_comment($this->userauthorization->getUserId(),
 											$this->input->post('event_id'),
 											$this->input->post('text'));
 		
@@ -90,7 +92,7 @@ class events extends CI_Controller{
 				$data['title'] = "The Literary Club - Event Registration";
 				$data['event_id'] = $event_id;
 				$data['validation_errors'] = validation_errors();
-				$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+				$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 				$data['institute_array'] = $this->tlc_model->get_institute_array();
 				
 				$this->load->view("events_register", $data);
@@ -108,7 +110,7 @@ class events extends CI_Controller{
 		} else {
 			$data['title'] = "The Literary Club - Event Registration";
 			$data['event_id'] = $event_id;
-			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+			$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 			$data['institute_array'] = $this->tlc_model->get_institute_array();
 			
 			$this->load->view("events_register", $data);
@@ -117,10 +119,10 @@ class events extends CI_Controller{
 	
 	//administrative functions
 	function create($arg = ""){
-		if($this->tlc_model->user_is_admin()){
+		if($this->userauthorization->isUserAdmin()){
 			if($arg != "done"){
 				$data['title'] = "The Literary Club - Create Event";
-				$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+				$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 				
 				$this->load->view('create_event_form', $data);
 			} else { //if $arg is 'done'
@@ -136,12 +138,12 @@ class events extends CI_Controller{
 				if($this->form_validation->run() == false){
 					$data['error'] = validation_errors();
 					$data['title'] = "The Literary Club - Create Event";
-					$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+					$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 					$this->load->view('create_event_form', $data);
 					return;
 				} else {
 					$profile = $this->tlc_model->get_profile();
-					$profile['id'] = $this->tlc_model->get_user_id();
+					$profile['id'] = $this->userauthorization->getUserId();
 					
 					$evt = array(
 						'name' => $this->input->post('name'),
@@ -208,14 +210,6 @@ class events extends CI_Controller{
 		} else {
 			die("<h4>You do not have permission to edit an event.</h4>");
 		}
-	}
-	
-	function manage($event_id){
-		//if invalid event if then print error
-		//if not admin print error
-		//add/delete teams.
-		//open/close registration
-		//delete event
 	}
 }
 

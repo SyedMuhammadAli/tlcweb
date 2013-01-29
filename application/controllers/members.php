@@ -10,8 +10,9 @@ class Members extends CI_Controller{
 	function __construct(){
 		parent::__construct();
 		$this->load->model('tlc_model');
+		$this->load->library("userauthorization", array("session_object" => $this->session));
 		
-		$this->is_logged_in = $this->tlc_model->is_user_logged_in();
+		$this->is_logged_in = $this->userauthorization->isUserLoggedIn();
 		
 		if(!$this->is_logged_in){
 			echo "<h3>You are not allowed to view this page.</h3>";
@@ -106,7 +107,9 @@ class Members extends CI_Controller{
 			return;
 		}
 		
-		if($this->tlc_model->post_news()){
+		if($this->tlc_model->post_news($this->userauthorization->getUserId(),
+									   $this->input->post("title"),
+									   $this->input->post("text") ) ) {
 			redirect("home");
 		} else {
 			echo "<h3>You do not have permission to post. Sorry</h3>";
@@ -114,9 +117,9 @@ class Members extends CI_Controller{
 	}
 	
 	function comment(){
-		$profile = $this->tlc_model->get_profile($this->tlc_model->get_user_id());
+		$profile = $this->tlc_model->get_profile( $this->userauthorization->getUserId() );
 		
-		$this->tlc_model->post_comment($this->tlc_model->get_user_id(), $this->input->post('thread_id'), $this->input->post('text'));
+		$this->tlc_model->post_comment($this->userauthorization->getUserId(), $this->input->post('thread_id'), $this->input->post('text'));
 		
 		redirect("home/showtopic/".$this->input->post('thread_id'));
 	}

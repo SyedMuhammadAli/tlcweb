@@ -28,20 +28,6 @@
  * 		why on this web?
  * Add society affiliations (student society groups) - needs refining: student social network
  * 
- * Bugs:
- * If there are no upcomming events. There are errors on line 78, 79
- * 
- * RC1 TODO:
- * Add event registration link to homepage below the event date.
- * Remove "User Registration" from the homepage.
- * Keep the header and footer in seprate header.php, and footer.php files.
- * Remove all instances of 'create thread' and 'create event' buttons from all pages.
- * Remove dummy image placeholder from showtopic.php view.
- * Fix design of Events profile page.
- * Fix design of Event registration page.
- * Add something to the right sidebar of the showtopic.php that makes sense.
- * Teams are not an entity. The system only keeps records as statis - non linking
- * independent entity.
  */
 
 error_reporting(E_ALL | E_STRICT);
@@ -59,6 +45,7 @@ class Home extends CI_Controller {
 		$this->load->model('events_model');
 		$this->load->library('pagination');
 		$this->load->library('table');
+		$this->load->library("userauthorization", array("session_object" => $this->session));
 		
 		//fix
 		$this->total_threads = $this->tlc_model->total_threads();
@@ -103,7 +90,7 @@ class Home extends CI_Controller {
 		$info['total_members'] = $this->total_members;
 		
 		//login info
-		$info['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+		$info['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 		
 		$info['page_links'] = $this->pagination->create_links();
 		
@@ -135,9 +122,20 @@ class Home extends CI_Controller {
 		}
 		
 		if($this->tlc_model->login_user($this->input->post("username"), $this->input->post("password"))){
+			$uid = $this->tlc_model->get_uid_by_username( $this->input->post('username') );
+			
+			$profile = $this->tlc_model->get_profile( $uid );
+			
 			$data = array(
-				'auth_lock' => $this->input->post('username'),
-				'auth_key'	=> true
+				'uid' => $uid,
+				'username' => $profile['usr'],
+				'fname' => $profile['firstname'],
+				'lname' => $profile['lastname'],
+				'email' => $profile['email'],
+				'active' => $profile['active'],
+				'contact' => $profile['contact_num'],
+				'is_logged_in'	=> true,
+				'is_user_admin' => $this->tlc_model->user_is_admin($uid)
 			);
 			
 			$this->session->set_userdata($data);
@@ -200,7 +198,7 @@ class Home extends CI_Controller {
 			$nxt_evt = $this->events_model->get_next_event();
 			
 			//login info
-			$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+			$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 			
 			if(count($nxt_evt) != 0):
 			$data['upcoming_event_exists'] = true;
@@ -218,7 +216,7 @@ class Home extends CI_Controller {
 	}
 	
 	function profile($id = -1){
-		if(!$this->tlc_model->is_user_logged_in()) die("<h2>You must be logged in to view member profiles.</h2>");
+		if(!$this->userauthorization->isUserLoggedIn()) die("<h2>You must be logged in to view member profiles.</h2>");
 		if(!is_int($id) && $id < 0) die("<h2>Invalid profile id. Error Code HPi1</h2>");
 		
 		$data['title'] = "The Literary Club - User Profile";
@@ -232,7 +230,8 @@ class Home extends CI_Controller {
 	}
 	
 	function signup($arg = ""){
-		//BLOCK ACCESS IS USER IS ALREADY LOGGED IN
+		if($this->userauthorization->isUserLoggedIn()) //if already logged in
+			redirect("/home");
 		
 		$data['title'] = "The Literary Club - Signup";
 		
@@ -242,7 +241,7 @@ class Home extends CI_Controller {
 		$data['total_members'] = $this->total_members;
 
 		//login info
-		$data['is_logged_in'] = $this->tlc_model->is_user_logged_in();
+		$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
 		$data['institute_array'] = $this->tlc_model->get_institute_array();
 		
 		if($arg == "validate"){
@@ -252,7 +251,7 @@ class Home extends CI_Controller {
 			$this->form_validation->set_rules("username", "Username", "trim|required|max_length[24]");
 			$this->form_validation->set_rules("password", "Password", "trim|required|min_length[6]|max_length[17]");
 			$this->form_validation->set_rules("password2", "Password Confirmation", "trim|required|matches[password]");
-			$this->form_validation->set_rules("firstname", "First Name", "trim|required|alpha|max_length[24]");
+			$this->form_validation->set_rules("firstname", "First Name", "trim|required|max_length[24]");
 			$this->form_validation->set_rules("lastname", "Last Name", "trim|required|alpha|max_length[24]");
 			$this->form_validation->set_rules("institute", "1", "trim|required|numeric");
 			$this->form_validation->set_rules("phone_num", "Only numbers", "trim|required|min_length[8]|max_length[13]|numeric");

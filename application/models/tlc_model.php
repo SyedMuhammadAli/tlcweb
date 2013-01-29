@@ -2,11 +2,8 @@
 
 class Tlc_model extends CI_Model{
 	
-	private $uid;
-	
 	function __construct(){
 		parent::__construct();
-		$this->uid = $this->get_user_id();
 	}
 	
 	function create_user(){
@@ -37,18 +34,19 @@ class Tlc_model extends CI_Model{
 	
 	function get_profile($id){
 		/* Fetching profile information */
-		$this->db->select(" members.usr,
+		$this->db->select(" members.id,
+							members.usr,
 							members.firstname,
 							members.lastname,
 							members.email,
 							members.contact_num,
 							members.hidden,
-							members.active,
-							departments.name AS department_name");
+							members.active ");
+							//departments.name AS department_name");
 		
 		$this->db->from("members");
 		
-		$this->db->join("departments", "members.dept_id = departments.id");
+		//$this->db->join("departments", "members.dept_id = departments.id");
 		
 		$this->db->where("members.id", $id);
 		
@@ -70,7 +68,7 @@ class Tlc_model extends CI_Model{
 		return $this->db->get();
 	}
 	
-	//obsolete
+	/* Code scheduled for removal ***
 	function get_editable_from_profile(){
 		$this->db->select("contact_num, email, hidden");
 		$this->db->from("members");
@@ -93,15 +91,16 @@ class Tlc_model extends CI_Model{
 											'contact_num' => $contact_num,
 											'email'		=> $email_addr));
 	}
+	*/
 	
-	function validate_password($pswd){
-		$user_row = $this->db->get_where("members", array("id" => $this->uid))->row();
+	function validate_password($uid, $pswd){
+		$user_row = $this->db->get_where("members", array("id" => $uid))->row();
 		
 		return ($user_row->pswd == md5($pswd)) ? true : false;
 	}
 	
-	function change_password_to($new_password){
-		$this->db->where("id", $this->uid);
+	function change_password_to($uid, $new_password){
+		$this->db->where("id", $uid);
 		$this->db->update("members", array("pswd" => md5($new_password)));
 	}
 	
@@ -115,59 +114,30 @@ class Tlc_model extends CI_Model{
 		
 		return $result;
 	}
-
-	//consider storing in session - cant think on any reason why not
-	function get_user_id(){
-		$user = $this->get_username();
-		
-		if(!$user){ return false; } //if not set
-		
-		//$uid = $this->db->get_where("members", array('usr' => $user))->row()->id;
-		
-		$this->db->select("id");
-		$this->db->from("members");
-		$this->db->where('usr', $user);
-		$uid = $this->db->get()->row()->id;
-		
-		return $uid;
-	}
 	
-	function user_is_admin(){
-		$uid = $this->get_user_id();
-
-		if(!$uid){ return false; } //if not logged in
-		
+	/* Return the permission level of the user */
+	function get_user_permission($uid){
 		$this->db->where("user_id", $uid);
 		
-		$permission = $this->db->get("permission")->row_array();
+		return $this->db->get("permission")->row()->level;
+	}
+	
+	function user_is_admin($uid){
+		$permission = $this->get_user_permission($uid);
 		
-		if(isset($permission["level"]) && $permission["level"] == 16){ //Admin level is 16
+		if($permission == 16){ //Admin level is 16
 			return true;
 		} else {
 			return false;
 		}
-		
 	}
 	
-	function post_news(){
-		$profile = $this->get_profile($this->get_user_id());
-		
-		//check permission to post
-		$this->db->where("user_id", $this->get_user_id());
-		$permission = $this->db->get("permission")->row_array();
-		
-		//Author has clearence lvl 4
-		if(!isset($permission["level"]) || $permission["level"] < 4){
+	function post_news($uid, $title, $text){
+		if($this->get_user_permission($uid) < 4){
 			return false; //if permission not given OR permission level is lower than required
 		} else {
 			$this->load->helper('typography');
-			
-			$data = array(
-						"title" => $this->input->post("title"),
-						"post" => nl2br_except_pre( $this->input->post("text") ),
-						"author_id" => $this->get_user_id()
-			);
-			
+			$data = array($title, $text, $uid);
 			$this->db->insert("posts", $data);
 			
 			return true;
@@ -234,26 +204,19 @@ class Tlc_model extends CI_Model{
 		return $this->db->get("members")->num_rows();
 	}
 	
-	//decript session data
-	function is_user_logged_in(){
-		return $this->session->userdata('auth_key');
-	}
-	
-	function get_username(){
-		$user = $this->session->userdata('auth_lock');
-		
-		if($user == false){
-			return false;
-		} else {
-			return $user;
-		}
-	}
-	
 	function get_user_by_id($user_id){
 		$this->db->select("usr");
 		$this->db->from("members");
 		$this->db->where("id", $user_id);
 		
 		return $this->db->get()->row()->usr;
+	}
+	
+	function get_uid_by_username($username){
+		$this->db->select("id");
+		$this->db->from("members");
+		$this->db->where("usr", $username);
+		
+		return $this->db->get()->row()->id;
 	}
 }

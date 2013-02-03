@@ -105,16 +105,110 @@
     </table>
   </div>
   <div id="content">
-    <p>content</p>
+    <table id="content_table" style="display:none"></table>
+        <script type="text/javascript">
+            $("#content_table").flexigrid({
+	            url: 'http://localhost/apricot/index.php/admin/content_json',
+	            dataType: 'json',
+	            colModel : [
+		            {display: 'Id', name : 'id', width : 15, align: 'left'},
+		            {display: 'Title', name : 'title', width : 200, align: 'left'},
+		            {display: 'Author', name : 'author', width : 150, align: 'left'},
+		            {display: 'Time', name : 'time', width : 150, align: 'left'}//,
+		            //{display: 'Active', name : 'active', width : 100, align: 'left'}
+		            ],
+	            searchitems : [ {display: 'Author', name : 'usr'} ],
+	            sortname: "id",
+	            sortorder: "asc",
+	            usepager: true,
+	            title: 'Articles',
+	            useRp: false,
+	            showTableToggleBtn: false,   
+	            singleSelect: true,
+	            width: window.size,
+	            height: 200
+            });
+        </script> 
+    </table>
   </div>
   <div id="events">
-    <p>events</p>
+    <table id="events_table" style="display:none"></table>
+        <script type="text/javascript">
+            $("#events_table").flexigrid({
+	            url: 'http://localhost/apricot/index.php/admin/events_json',
+	            dataType: 'json',
+	            colModel : [
+		            {display: 'Id', name : 'event_id', width : 15, align: 'left'},
+		            {display: 'Author', name : 'usr', width : 100, align: 'left'},
+		            {display: 'Event Name', name : 'event_name', width : 100, align: 'left'},
+		            {display: 'Date', name : 'event_date', width : 100, align: 'left'},
+		            {display: 'Active', name : 'active', width : 100, align: 'left'}
+		            ],
+	            searchitems : [ {display: 'Author', name : 'usr'} ],
+	            sortname: "id",
+	            sortorder: "asc",
+	            usepager: true,
+	            title: 'Events',
+	            useRp: false,
+	            showTableToggleBtn: false,   
+	            singleSelect: true,
+	            width: window.size,
+	            height: 200
+            });
+        </script> 
+    </table>
   </div>
   <div id="teams">
-    <p>teams</p>
+  <table id="teams_table" style="display:none"></table>
+        <script type="text/javascript">
+            $("#teams_table").flexigrid({
+	            url: 'http://localhost/apricot/index.php/admin/teams_json',
+	            dataType: 'json',
+	            colModel : [{display: 'Id', name : 'id', width : 15, align: 'left'},
+	    		            {display: 'Team Name', name : 'team_name', width : 100, align: 'left'},
+	    		            {display: 'Event Name', name : 'event_name', width : 100, align: 'left'},
+	    		            {display: 'Institute', name : 'institute_name', width : 100, align: 'left'},
+	    		            {display: 'Participants', name : 'participants', width : 100, align: 'left'},
+	    		            {display: 'Contact', name : 'contact_num', width : 100, align: 'left'},
+	    		            {display: 'Email', name : 'email', width : 100, align: 'left'},
+	    		            {display: 'Active', name : 'active', width : 100, align: 'left'} ],
+	            searchitems : [ {display: 'Name', name : 'name'} ],
+	            sortname: "id",
+	            sortorder: "asc",
+	            usepager: true,
+	            title: 'Departments',
+	            useRp: false,
+	            showTableToggleBtn: false,
+	            singleSelect: true,
+	            width: window.size,
+	            height: 200
+            });
+        </script> 
+    </table>
   </div>
   <div id="departments">
-    <p>departments</p>
+    <table id="dept_table" style="display:none"></table>
+        <script type="text/javascript">
+            $("#dept_table").flexigrid({
+	            url: 'http://localhost/apricot/index.php/admin/departments_json',
+	            dataType: 'json',
+	            colModel : [
+		            {display: 'Id', name : 'id', width : 15, align: 'left'},
+		            {display: 'Name', name : 'name', width : 100, align: 'left'}
+		            ],
+	            searchitems : [ {display: 'Name', name : 'name'} ],
+	            sortname: "id",
+	            sortorder: "asc",
+	            usepager: true,
+	            title: 'Departments',
+	            useRp: false,
+	            showTableToggleBtn: false,
+	            singleSelect: true,
+	            width: window.size,
+	            height: 200
+            });
+        </script> 
+    </table>
   </div>
 </nav>
 <footer>

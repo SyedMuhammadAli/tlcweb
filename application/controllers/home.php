@@ -79,7 +79,7 @@ class Home extends CI_Controller {
 		$info['event_name'] = $nxt_evt['name'];
 		$info['event_id'] = $nxt_evt['id'];
 		$info['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
-		$info['registration_allowed'] = $nxt_evt['registration_allowed'];
+		$info['event_active'] = $nxt_evt['active'];
 		else:
 		$info['upcoming_event_exists'] = false;
 		endif;

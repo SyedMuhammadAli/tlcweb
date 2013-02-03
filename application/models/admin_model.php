@@ -86,13 +86,8 @@ class Admin_model extends CI_Model{
 		return $this->db->get("members");
 	}
 	
-	//to be removed
-	function get_members($per_page, $uri_segment){
-		$this->db->select("id, firstname, lastname, active");
-		return $this->db->get('members', $per_page, $uri_segment);
-	}
-	
-	/* Return the teams associated with the event_id.
+	/* deprecated
+	 * Return the teams associated with the event_id.
 	 * */
 	function get_teams($per_page, $uri_segment, $event_id=NULL){
 		if($event_id == NULL) $event_id = 1;
@@ -103,7 +98,8 @@ class Admin_model extends CI_Model{
 		return $this->db->get("participant_teams");
 	}
 	
-	/* Returns the events of the current year.
+	/* deprecated
+	 * Returns the events of the current year.
 	 * If year is passed as an argument then
 	 * it returns the list of events for that year.
 	 * */
@@ -117,9 +113,55 @@ class Admin_model extends CI_Model{
 		return $this->db->get("events"); 
 	}
 	
+	function get_all_events(){
+		$this->db->select("m.usr as usr,
+							e.id as event_id,
+							e.name as event_name,
+							e.event_date as event_date,
+							e.active as active");
+		$this->db->from("members m, events e");
+		$this->db->where("m.id = e.creator_id");
+		return $this->db->get();
+	}
+	
 	/* Returns all departments.
 	 * */
-	function get_departments(){
+	function get_all_departments(){
 		return $this->db->get("departments");
+	}
+	
+	function get_all_articles(){
+		$this->db->select("article.id as id,
+						   article.title as title,
+						   article.time as time,
+						   content_creator.usr as author");
+		$this->db->from("posts as article, members as content_creator");
+		$this->db->where("article.author_id = content_creator.id");
+		
+		return $this->db->get();
+	}
+	
+	function get_all_teams(){
+		/* SELECT team.id, team.team_name, team.participants, team.contact, team.alt_contact, team.email_add, team.active, event.name, institute.name
+		   	FROM participant_teams as team, events as event, institutes as institute
+		    WHERE team.event_id = event.id and team.inst_id = institute.id; */
+		
+		$this->db->select("team.id as id,
+						team.team_name as team_name, 
+						team.participants as participants, 
+						team.contact as contact_num, 
+						team.alt_contact as alt_contact, 
+						team.email_add as email,
+						team.active as active, 
+						event.name as event_name, 
+						institute.name as institute_name");
+		
+		$this->db->from("participant_teams as team,
+						events as event, 
+						institutes as institute");
+		
+		$this->db->where("team.event_id = event.id and team.inst_id = institute.id");
+		
+		return $this->db->get();
 	}
 }

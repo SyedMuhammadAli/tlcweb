@@ -82,7 +82,7 @@ class events extends CI_Controller{
 			$this->load->library('form_validation');
 			
 			$this->form_validation->set_rules("inst_id", "Institute Id", "trim|required|numeric");
-			$this->form_validation->set_rules("team_name", "Team Name", "trim|required|alpha_dash|max_length[20]");
+			$this->form_validation->set_rules("team_name", "Team Name", "trim|required|max_length[20]");
 			$this->form_validation->set_rules("participants_name", "participants_name", "trim|required|min_length[3]|max_length[50]");
 			$this->form_validation->set_rules("contact", "Contact", "trim|required|min_length[8]|max_length[12]");
 			$this->form_validation->set_rules("alt_contact", "Alternate Contact", "trim|required|min_length[8]|max_length[12]");

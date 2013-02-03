@@ -231,7 +231,7 @@
                                                 <p><?php echo $event_countdown_timer; ?></p>
                                                 <p>
                                                 	<h4>
-                                                	<?php if($registration_allowed) echo anchor("events/register/{$event_id}","Register Now"); ?>
+                                                	<?php if($event_active) echo anchor("events/register/{$event_id}","Register Now"); ?>
                                                 	</h4>
                                                 </p>
                                                 <?php else: ?>

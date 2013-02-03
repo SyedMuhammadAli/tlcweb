@@ -23,7 +23,7 @@ class Events_model extends CI_Model{
 							events.rules as event_rules,
 							events.creator_id,
 							events.event_date,
-							events.registration_allowed,
+							events.active,
 							members.usr as creator_name");
 		$this->db->from("events");
 		$this->db->join("members", "events.creator_id = members.id");
@@ -68,7 +68,7 @@ class Events_model extends CI_Model{
 	}
 	
 	function get_next_event(){
-		$this->db->select('id, name, event_date, registration_allowed');
+		$this->db->select('id, name, event_date, active');
 		$this->db->from('events');
 		$this->db->where("event_date >", time());
 		$this->db->order_by('event_date', 'asc');
@@ -82,7 +82,7 @@ class Events_model extends CI_Model{
 		
 		if($evt == null){
 			return false;
-		} else if($evt->registration_allowed == 0 && ($evt->event_date - time()) > 0){ //change == to !=
+		} else if($evt->active == 0 && ($evt->event_date - time()) > 0){ //change == to !=
 			return true;
 		} else {
 			return false;

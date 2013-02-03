@@ -25,7 +25,7 @@ class Enigma {
 		return null;
     	else
 	{
-		$rand_str = $this->genRandString(14);
+		$rand_str = $this->gen_rand_string(14);
 		return array(
 				"rand_str" => $rand_str,
 				"hash" => hash("sha256", $pass.$randStr));

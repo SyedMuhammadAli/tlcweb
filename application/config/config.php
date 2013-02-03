@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/GitHub/tlcweb/';
+$config['base_url']	= 'http://localhost/apricot/';
 
 /*
 |--------------------------------------------------------------------------

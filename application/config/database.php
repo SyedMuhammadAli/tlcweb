@@ -49,8 +49,8 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'tlcweb';
-$db['default']['password'] = 'tlcweb';
+$db['default']['username'] = 'root';
+$db['default']['password'] = 'root';
 $db['default']['database'] = 'tlc_portal_v1';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';

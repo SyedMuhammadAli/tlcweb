@@ -33,6 +33,13 @@ class Admin extends CI_Controller {
 	 * based on the action and the user_id passed. 
 	 * */
 	function members($action=NULL, $user_id=NULL){
+		$data['title'] = $this->_title;
+		$data['page'] = "members";
+		$data['page_links'] = $this->pagination->create_links();
+			
+		$this->load->view("admin_view", $data);
+		
+		/* //scheduled for removal
 		if(is_null($action)){
 			$data['title'] = $this->_title;
 			$data['record'] = $this->admin_model->get_members($this->_perpage,
@@ -50,6 +57,22 @@ class Admin extends CI_Controller {
 			
 			$this->members(); //redirect to home
 		}
+		*/
+	}
+	
+	function members_json(){
+		$member_data = $this->admin_model->get_all_members();
+		
+		$json_data = array( "page" => ceil($member_data->num_rows()/15), "total" => $member_data->num_rows(), "rows" => array() );
+		
+		foreach($member_data->result_array() as $row){
+			$row["active"] = ($row["active"] ? "true" : "false");
+			$entry = array( "id" => $row["id"],
+					"cell" => $row );
+			array_push($json_data["rows"], $entry);
+		}
+		
+		echo json_encode($json_data);
 	}
 	
 	function team_operation($action = NULL, $team_id = NULL){

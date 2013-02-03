@@ -76,11 +76,17 @@ class Admin_model extends CI_Model{
 	}
 	
 	function get_memberlist_in_dept($dept_id){
-		$this->db->where('dept_id', $dept_id);
-		$this->db->where('active', 1);
-		return $this->db->get('members');
+		//$this->db->where('dept_id', $dept_id);
+		//$this->db->where('active', 1);
+		//return $this->db->get('members');
 	}
 	
+	function get_all_members(){
+		$this->db->select("id, usr, firstname, lastname, contact_num, email, active");
+		return $this->db->get("members");
+	}
+	
+	//to be removed
 	function get_members($per_page, $uri_segment){
 		$this->db->select("id, firstname, lastname, active");
 		return $this->db->get('members', $per_page, $uri_segment);

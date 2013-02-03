@@ -51,7 +51,7 @@
 			<div id="top-stitch"></div>
 			<div class="container">
 				<div id="logo-area">
-                	<?php echo img(array('src'=>'images/logo.png', 'alt' => 'Logo', 'href'=>'http://www.tlc.net46.net','id'=>'logo'));?>
+                	<?php echo img(array('src'=>'images/logo.png', 'alt' => 'Logo', 'href'=>'http://www.tlcnuces.com','id'=>'logo'));?>
 					<p id="slogan">Welcome To The Literary Club</p>
 				</div> <!-- end #logo-area -->
 				<div id="content">
@@ -66,12 +66,10 @@
                                     	<div id="left-area">
                                         	<h1 class="main-title"><?php echo $event_name?></h1>
                                         	<div id="entries">
-                                            	
-                                                <p>Created By: <?php echo anchor("home/profile/{$creator_id}",$creator_name);?></p>
                                                 <p>About: <?php echo $event_about; ?></p>
                                                 <p>Rules: <?php echo $event_rules; ?></p>
-                                                <p>Created By: <?php echo $creator_id; ?></p>
                                                 <p>Event Date: <?php echo date("F j, Y, g:i a", $event_date); ?></p>
+                                                <p>Created By: <?php echo anchor("home/profile/{$creator_id}",$creator_name);?></p>
                                                 <p><h4><?php echo anchor("events/register/{$event_id}","Register");?></h4></p>
                                                 <br>
                                                 <p><strong>Organizers:</strong></p>

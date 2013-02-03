@@ -14,7 +14,7 @@ class Enigma {
 	
 	for ($i = 0; $i < $size; $i++) 
 	    {
-		$randstring .= $characters[rand(0, strlen($characters))];
+		$randstring .= $characters[rand(0, strlen($characters))-1];
 	    }
 	return $randstring;
     }    

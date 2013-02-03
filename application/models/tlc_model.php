@@ -4,31 +4,23 @@ class Tlc_model extends CI_Model{
 	
 	function __construct(){
 		parent::__construct();
+		$this->load->library('enigma');
 	}
 	
-	function create_user(){
-		$account_info = array(
-			"usr"		=> $this->input->post("username"),
-			"pswd"		=> md5($this->input->post("password")),
-			"firstname"	=> $this->input->post("firstname"),
-			"lastname"	=> $this->input->post("lastname"),
-			"contact_num" => $this->input->post("phone_num"),
-			"inst_id"	=> $this->input->post("institute"),
-			"email"		=> $this->input->post("email")
-		);
+	function create_user($account_info){
 		
 		$this->db->insert("members", $account_info);
 	}
 	
 	function login_user($user, $pass){
 		$this->db->where("usr", $user);
-		$this->db->where("pswd", md5($pass));
 		
 		$query = $this->db->get("members");
 
-		if($query->num_rows() == 1 && $query->row()->active != false)
-			return true;
-		else
+		$row = $query->row(0);
+		if($this->enigma->checkPass($pass, $row->pswd, $row->salt))
+		     return true;
+		else		
 			return false;
 	}
 	
@@ -120,6 +112,16 @@ class Tlc_model extends CI_Model{
 		$this->db->where("user_id", $uid);
 		
 		return $this->db->get("permission")->row()->level;
+	}
+	
+	function user_is_admin($uid){
+		$permission = $this->get_user_permission($uid);
+		
+		if($permission == 16){ //Admin level is 16
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	function post_news($uid, $title, $text){

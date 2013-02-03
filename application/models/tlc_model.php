@@ -4,32 +4,33 @@ class Tlc_model extends CI_Model{
 	
 	function __construct(){
 		parent::__construct();
+		$this->load->library('enigma');
 	}
 	
-	function create_user(){
-		$account_info = array(
-			"usr"		=> $this->input->post("username"),
-			"pswd"		=> md5($this->input->post("password")),
-			"firstname"	=> $this->input->post("firstname"),
-			"lastname"	=> $this->input->post("lastname"),
-			"contact_num" => $this->input->post("phone_num"),
-			"inst_id"	=> $this->input->post("institute"),
-			"email"		=> $this->input->post("email")
-		);
+	function create_user($account_info){
 		
 		$this->db->insert("members", $account_info);
 	}
 	
 	function login_user($user, $pass){
 		$this->db->where("usr", $user);
-		$this->db->where("pswd", md5($pass));
+		//$this->db->where("pswd", md5($pass));
 		
 		$query = $this->db->get("members");
 
-		if($query->num_rows() == 1 && $query->row()->active != false)
+		//if($query->num_rows() == 1 && $query->row()->active != false)
+		//	return true;
+		//else
+		//	return false;
+		
+	
+		foreach ($query->result() as $row)
+		{
+		    if($this->enigma->checkPass($pass, $row->pswd, $row->salt))
 			return true;
-		else
-			return false;
+		}
+		
+		return false;
 	}
 	
 	function get_profile($id){

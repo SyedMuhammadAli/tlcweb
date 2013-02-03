@@ -35,12 +35,13 @@ ini_set("display_errors", 1);
 
 class Home extends CI_Controller {
 	private		$total_threads,
-				$total_comments,
-				$total_members;
+			$total_comments,
+			$total_members;
 	
 	function __construct(){
 		parent::__construct();
 		
+		$this->load->library('enigma');
 		$this->load->model('tlc_model');
 		$this->load->model('events_model');
 		$this->load->library('pagination');
@@ -272,7 +273,22 @@ class Home extends CI_Controller {
 				$this->load->view("signup", $data);
 				return;
 			} else {
-				$this->tlc_model->create_user(); //create user
+				
+				$pass_arr = $this->enigma->Encrypt($this->input->post("password"));
+								
+				$account_info = array(
+					"usr"		=> $this->input->post("username"),
+					"pswd"		=> $pass_arr['hash'],
+					"firstname"	=> $this->input->post("firstname"),
+					"lastname"	=> $this->input->post("lastname"),
+					"contact_num" => $this->input->post("phone_num"),
+					"inst_id"	=> $this->input->post("institute"),
+					"email"		=> $this->input->post("email"),
+					"salt"		=> $pass_arr['rand_str']
+				);
+		
+				
+				$this->tlc_model->create_user($account_info); //create user
 				echo "<h3>Thank You. Please wait while an administrator accepts your signup request.</h3>";
 				echo anchor('home', "Click here to go back to the main page.");
 			}

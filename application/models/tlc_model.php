@@ -14,20 +14,14 @@ class Tlc_model extends CI_Model{
 	
 	function login_user($user, $pass){
 		$this->db->where("usr", $user);
-		//$this->db->where("pswd", md5($pass));
 		
 		$query = $this->db->get("members");
 
-		//if($query->num_rows() == 1 && $query->row()->active != false)
-		//	return true;
-		//else
-		//	return false;
-		
-	
 		foreach ($query->result() as $row)
 		{
 		    if($this->enigma->checkPass($pass, $row->pswd, $row->salt))
-			return true;
+		     {   echo "was there";
+			return true;	}
 		}
 		
 		return false;

@@ -11,6 +11,7 @@ class Enigma {
     {
 	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	$randstring = '';
+	
 	for ($i = 0; $i < $size; $i++) 
 	    {
 		$randstring .= $characters[rand(0, strlen($characters))];
@@ -26,9 +27,11 @@ class Enigma {
     	else
 	{
 		$rand_str = $this->gen_rand_string(14);
-		return array(
+		$result_arr = array(
 				"rand_str" => $rand_str,
-				"hash" => hash("sha256", $pass.$randStr));
+				"hash" => hash("sha256", $pass.$rand_str));
+		
+		return $result_arr;
 	}
     }
     

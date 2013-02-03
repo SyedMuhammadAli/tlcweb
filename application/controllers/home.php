@@ -281,10 +281,11 @@ class Home extends CI_Controller {
 					"pswd"		=> $pass_arr['hash'],
 					"firstname"	=> $this->input->post("firstname"),
 					"lastname"	=> $this->input->post("lastname"),
-					"contact_num" => $this->input->post("phone_num"),
+					"contact_num" =>   $this->input->post("phone_num"),
 					"inst_id"	=> $this->input->post("institute"),
 					"email"		=> $this->input->post("email"),
-					"salt"		=> $pass_arr['rand_str']
+					"salt"		=> $pass_arr['rand_str'],
+					"active"	=> 1
 				);
 		
 				

@@ -2,26 +2,16 @@
 
 class Admin extends CI_Controller {
 	private $_title = "Admin Panel v1.0";
-	private $_perpage = 10;
-	private $_urisegment = 3;
 	
 	function __construct(){
 		parent::__construct();
 		
 		$this->load->model('tlc_model');
 		$this->load->model('admin_model');
-		$this->load->library('pagination');
 		$this->load->library("userauthorization", array("session_object" => $this->session));
 		
 		if( !$this->userauthorization->isUserAdmin() ) //authorize access
 			redirect("/home");
-		
-		$config['base_url'] = "http://localhost/apricot/index.php/admin/";
-		$config['per_page'] = $this->_perpage;
-		$config['total_rows'] = $this->tlc_model->total_members();
-		$config['next_link'] = "Next";
-		$config['prev_link'] = "Prev";
-		$this->pagination->initialize($config);
 	}
 	
 	function index(){
@@ -36,15 +26,25 @@ class Admin extends CI_Controller {
 	function members(){
 		$data['title'] = $this->_title;
 		$data['page'] = "members";
-		$data['page_links'] = $this->pagination->create_links();
 			
 		$this->load->view("admin_view", $data);
 	}
 
 	function members_json(){
-		$table_data = $this->admin_model->get_all_members();
+		$rp = $this->input->post("rp");
+		$page = $this->input->post("page");
+		
+		$per_page = intval($this->input->post("rp"));
+		$offset = !is_null($page) ? intval($rp)*(intval($page)-1) : 0;
+		
+		$table_data = $this->admin_model->get_all_members($this->input->post("sortname"), 
+														$this->input->post("sortorder"),
+														$this->input->post("qtype"),
+														$this->input->post("query"),
+														$per_page,
+														$offset);
 	
-		$json_data = array( "page" => ceil($table_data->num_rows()/15), "total" => $table_data->num_rows(), "rows" => array() );
+		$json_data = array( "page" => intval($page), "total" => $this->tlc_model->total_members(), "rows" => array() );
 	
 		foreach($table_data->result_array() as $row){
 			$row["active"] = ($row["active"] ? "true" : "false");
@@ -57,9 +57,20 @@ class Admin extends CI_Controller {
 	}
 	
 	function content_json(){
-		$table_data = $this->admin_model->get_all_articles();
+		$rp = $this->input->post("rp");
+		$page = $this->input->post("page");
+		
+		$per_page = intval($this->input->post("rp"));
+		$offset = !is_null($page) ? intval($rp)*(intval($page)-1) : 0;
+		
+		$table_data = $this->admin_model->get_all_articles($this->input->post("sortname"), 
+														$this->input->post("sortorder"),
+														$this->input->post("qtype"),
+														$this->input->post("query"),
+														$per_page,
+														$offset);
 	
-		$json_data = array( "page" => ceil($table_data->num_rows()/15), "total" => $table_data->num_rows(), "rows" => array() );
+		$json_data = array( "page" => intval($page), "total" => $this->tlc_model->total_threads(), "rows" => array() );
 	
 		foreach($table_data->result_array() as $row){
 			//$row["active"] = ($row["active"] ? "true" : "false");
@@ -73,9 +84,20 @@ class Admin extends CI_Controller {
 	}
 	
 	function events_json(){
-		$table_data = $this->admin_model->get_all_events();
+		$rp = $this->input->post("rp");
+		$page = $this->input->post("page");
 		
-		$json_data = array( "page" => ceil($table_data->num_rows()/15), "total" => $table_data->num_rows(), "rows" => array() );
+		$per_page = intval($this->input->post("rp"));
+		$offset = !is_null($page) ? intval($rp)*(intval($page)-1) : 0;
+		
+		$table_data = $this->admin_model->get_all_events($this->input->post("sortname"), 
+														$this->input->post("sortorder"),
+														$this->input->post("qtype"),
+														$this->input->post("query"),
+														$per_page,
+														$offset);
+		
+		$json_data = array( "page" => intval($page), "total" => $this->tlc_model->total_events(), "rows" => array() );
 		
 		foreach($table_data->result_array() as $row){
 			$row["active"] = ($row["active"] ? "true" : "false");
@@ -89,9 +111,20 @@ class Admin extends CI_Controller {
 	}
 	
 	function teams_json(){
-		$table_data = $this->admin_model->get_all_teams();
+		$rp = $this->input->post("rp");
+		$page = $this->input->post("page");
 		
-		$json_data = array( "page" => ceil($table_data->num_rows()/15), "total" => $table_data->num_rows(), "rows" => array() );
+		$per_page = intval($this->input->post("rp"));
+		$offset = !is_null($page) ? intval($rp)*(intval($page)-1) : 0;
+		
+		$table_data = $this->admin_model->get_all_teams($this->input->post("sortname"), 
+														$this->input->post("sortorder"),
+														$this->input->post("qtype"),
+														$this->input->post("query"),
+														$per_page,
+														$offset);
+		
+		$json_data = array( "page" => intval($page), "total" => $this->tlc_model->total_teams(), "rows" => array() );
 		
 		foreach($table_data->result_array() as $row){
 			$row["active"] = ($row["active"] ? "true" : "false");
@@ -106,7 +139,7 @@ class Admin extends CI_Controller {
 	function departments_json(){
 		$table_data = $this->admin_model->get_all_departments();
 		
-		$json_data = array( "page" => ceil($table_data->num_rows()/15), "total" => $table_data->num_rows(), "rows" => array() );
+		$json_data = array( "page" => ceil($table_data->num_rows()/10), "total" => $table_data->num_rows(), "rows" => array() );
 		
 		foreach($table_data->result_array() as $row){
 			$entry = array( "id" => $row["id"],
@@ -117,47 +150,59 @@ class Admin extends CI_Controller {
 		echo json_encode($json_data);
 	}
 	
-	function teams($event_id = NULL){
-		$data['title'] = $this->_title;
-		$data['record'] = $this->admin_model->get_teams($this->_perpage,
-				$this->uri->segment($this->_urisegment),
-				$event_id);
-		$data['page'] = "teams";
+	function tlcmember_json(){
+		$rp = $this->input->post("rp");
+		$page = $this->input->post("page");
+		
+		$per_page = intval($this->input->post("rp"));
+		$offset = !is_null($page) ? intval($rp)*(intval($page)-1) : 0;
+		
+		$table_data = $this->admin_model->get_all_tlc_members($this->input->post("sortname"), 
+															$this->input->post("sortorder"),
+															$this->input->post("qtype"),
+															$this->input->post("query"),
+															$per_page,
+															$offset);
 	
-		$event_list = $this->admin_model->get_events(2013);
-		$tmp_evt_array = array();
+		$json_data = array( "page" => intval($page), "total" => $this->tlc_model->total_tlc_members(), "rows" => array() );
 	
-		foreach ($event_list->result() as $event){
-			$tmp_evt_array[$event->id] = $event->name;
+		foreach($table_data->result_array() as $row){
+			$entry = array( "id" => $row["user_id"],
+					"cell" => $row );
+			array_push($json_data["rows"], $entry);
 		}
 	
-		$data['event_list'] = $tmp_evt_array;
-	
-		$this->load->view("admin_view", $data);
-	}
-	
-	function team_operation($action = NULL, $team_id = NULL){
-		switch($action){
-			case "activate":
-				if($team_id == NULL) die("Error ap57");
-				$this->admin_model->activate_team($team_id);
-				$this->teams();
-				break;
-				
-			case "deactivate":
-				if($team_id == NULL) die("Error ap63");
-				$this->admin_model->deactivate_team($team_id);
-				$this->teams();
-				break;
-				
-			default:
-				die("Error ap69");
-		}
+		echo json_encode($json_data);
 	}
 	
 	function tlc_members(){
 		echo "on todo list";
 	}
 	
+	function member_action($action, $uid){
+		switch($action){
+			case "activate":
+				$this->admin_model->activate_member($uid);
+				break;
+			case "deactivate":
+				$this->admin_model->deactivate_member($uid);
+				break;
+			default:
+				die("invalid member action.");
+		}
+	}
+	
+	function event_action($action, $eid){
+		switch($action){
+			case "activate":
+				$this->admin_model->enable_event_registration($eid);
+				break;
+			case "deactivate":
+				$this->admin_model->disable_event_registration($eid);
+				break;
+			default:
+				die("invalid member action.");
+		}
+	}
 }
 ?>

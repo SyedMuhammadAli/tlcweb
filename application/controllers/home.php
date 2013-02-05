@@ -76,13 +76,15 @@ class Home extends CI_Controller {
 		$nxt_evt = $this->events_model->get_next_event();
 		
 		if(count($nxt_evt) != 0):
-		$info['upcoming_event_exists'] = true;
+		$info['event_active'] = true;
 		$info['event_name'] = $nxt_evt['name'];
 		$info['event_id'] = $nxt_evt['id'];
 		$info['event_countdown_timer'] = $this->calc_time_remaining($nxt_evt['event_date']);
-		$info['registration_allowed'] = $nxt_evt['registration_allowed'];
+		$info['upcoming_event_exists'] = true;
+		$info['active'] = $nxt_evt['active'];
 		else:
 		$info['upcoming_event_exists'] = false;
+		$info['event_active'] = false;
 		endif;
 		
 		//stats

@@ -185,15 +185,27 @@ class Tlc_model extends CI_Model{
 	}
 	
 	function total_threads(){
-		return $this->db->get("posts")->num_rows();
+		return $this->db->count_all("posts");
 	}
 	
 	function total_comments(){
-		return $this->db->get("comments")->num_rows();
+		return $this->db->count_all("comments");
 	}
 	
 	function total_members(){
-		return $this->db->get("members")->num_rows();
+		return $this->db->count_all("members");
+	}
+	
+	function total_events(){
+		return $this->db->count_all("events");
+	}
+	
+	function total_teams(){
+		return $this->db->count_all("participant_teams");
+	}
+	
+	function total_tlc_members(){
+		return $this->db->count_all("tlc_member");
 	}
 	
 	function get_user_by_id($user_id){

@@ -124,8 +124,14 @@ class Home extends CI_Controller {
 			die("<h4>You can't access this page directly.</h4>");
 		}
 		
-		if($this->tlc_model->login_user($this->input->post("username"), $this->input->post("password"))){
-			$uid = $this->tlc_model->get_uid_by_username( $this->input->post('username') );
+        $usr = $this->input->post("username");
+        $pass = $this->input->post("password");
+        
+        $row_result = $this->tlc_model->login_user($usr, $pass);
+        
+        if($row_result && $this->enigma->checkPass($pass, $row_result->pswd, $row_result->salt)) {      // Both user name and password match
+            
+			$uid = $this->tlc_model->get_uid_by_username($this->input->post('username'));
 			
 			$profile = $this->tlc_model->get_profile( $uid );
 			
@@ -144,8 +150,8 @@ class Home extends CI_Controller {
 			$this->session->set_userdata($data);
 			
 			redirect("home/");
-		} else {
-			echo "<h3>Login failure. Please try again. <br>If you entered the correct details, your account might be inactive.</h3>";
+		} else {  // neither user name nor password match
+            echo "<h3>Login failure. Please try again. <br>If you entered the correct details, your account might be inactive.</h3>";
 			echo anchor("home/", "[Home]") . "  ";
 			echo anchor("home/login", "[Login]");
 		}

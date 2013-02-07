@@ -62,6 +62,30 @@ footer {
 #departments .flexigrid {
 	float: left;
 }
+
+.jqui-form-label, .jqui-form-input {
+	display: block;
+}
+
+input.text {
+	margin-bottom: 12px;
+	width: 95%;
+	padding: .4em;
+}
+
+fieldset {
+	padding: 0;
+	border: 0;
+	margin-top: 25px;
+}
+
+.flexigrid-menu-button {
+	margin: 0px;
+	padding: 0px;
+	font-weight: bold;
+	font-family: sans-serif;
+	text-decoration: none;
+}
 </style>
 </head>
 <body>
@@ -157,6 +181,96 @@ footer {
         </script>
 		</div>
 		<div id="events">
+			<script>
+			$(function(){
+				var event_name = $( "#event_name" ),
+					event_date = $( "#event_date" ),
+					event_about = $( "#event_about" ),
+			      	event_rules = $("#event_rules"),
+			      	allFields = $( [] ).add( event_name ).add( event_date ).add( event_about ).add( event_rules ),
+			      	tips = $( ".validateTips" );
+
+				function updateTips( t ) {
+				      tips
+				        .text( t )
+				        .addClass( "ui-state-highlight" );
+				      setTimeout(function() {
+				        tips.removeClass( "ui-state-highlight", 1500 );
+				      }, 500 );
+				}
+				 
+				function checkLength( o, n, min, max ) {
+					if ( o.val().length > max || o.val().length < min ) {
+						o.addClass( "ui-state-error" );
+						updateTips( "Length of " + n + " must be between " + min + " and " + max + "." );
+						return false;
+					} else {
+						return true;
+					}
+				}
+			 	
+				$( "#dialog-form" ).dialog({
+			      autoOpen: false,
+			      height: 600,
+			      width: 500,
+			      modal: true,
+			      buttons: {
+			        "Create Event": function() {
+			          var bValid = true;
+			          //allFields.removeClass( "ui-state-error" );
+			 		  
+			          bValid = bValid && checkLength( event_name, "event_name", 2, 48 );
+			          bValid = bValid && checkLength( event_about, "event_about", 6, 512 );
+			          bValid = bValid && checkLength( event_rules, "event_rules", 6, 512 );
+			          
+			          if ( bValid ) {
+			        	$.post("http://localhost/apricot/index.php/events/create/done",
+			        	{
+			        		name : event_name.val(), 
+			        		date : event_date.val(),
+			        		about: event_about.val(), 
+			        		rules: event_rules.val()
+			        	})
+			        	.done( function() { $('#events_table').flexReload(); });
+			        	
+			          	$( this ).dialog( "close" );
+			          }
+			        },
+			        Cancel: function() {
+			          $( this ).dialog( "close" );
+			        }
+			      },
+			      
+			      close: function() {
+			        allFields.val( "" ).removeClass( "ui-state-error" );
+			      }
+			    });
+			 	
+			});
+			</script>
+			<div id="dialog-form" title="Create a new Event.">
+				<p class="validateTips">All form fields are required.</p>
+
+				<form>
+					<fieldset>
+						<label for="event_name" class="jqui-form-label">Event Name</label>
+						<input type="text"
+							name="event_name" id="event_name"
+							class="text ui-widget-content ui-corner-all" />
+						<label for="event_date" class="jqui-form-label">Event Date</label>
+						<input type="date"
+							name="event_date" id="event_date"
+							class="ui-widget-content ui-corner-all" />
+						<label for="event_about" class="jqui-form-label">About</label>
+						<textarea type="text" name="event_about" id="event_about" maxlength=512 cols=48
+							class="text ui-widget-content ui-corner-all"></textarea>
+
+						<label for="event_rules" class="jqui-form-label">Rules</label>
+						<textarea type="text" name="event_rules" id="event_rules" maxlength=512 cols=48
+							class="text ui-widget-content ui-corner-all"></textarea>
+					</fieldset>
+				</form>
+			</div>
 			<table id="events_table" style="display: none"></table>
 			<script type="text/javascript">
             $("#events_table").flexigrid({
@@ -181,14 +295,21 @@ footer {
 	            singleSelect: true,
 	            width: window.size,
 	            height: 200,
-	            buttons : [ {name: 'Activate User', bclass: 'add', onpress : activateEventAction},
-	                        {name: 'Deactivate User', bclass: 'edit', onpress : deactivateEventAction} ]
+	            buttons : [ {name: 'New Event', bclass: 'flexigrid-menu-button', onpress: openCreateEventForm},
+	        	            {name: 'Activate User', bclass: 'flexigrid-menu-button', onpress : activateEventAction},
+	                        {name: 'Deactivate User', bclass: 'flexigrid-menu-button', onpress : deactivateEventAction} ]
             });
 
 
             function activateEventAction(){
             	var grid = $('#events_table');
             	var eid = $('.trSelected td:nth-child(1) div', grid).text();
+
+				if(eid == ""){
+					alert("No cell selected");
+					return;
+				}
+            	
             	$.get("event_action/activate/"+eid);
             	grid.flexReload();
             }
@@ -196,8 +317,18 @@ footer {
             function deactivateEventAction(){
                 var grid = $('#events_table');
             	var eid = $('.trSelected td:nth-child(1) div', grid).text();
+
+				if(eid == ""){
+					alert("No cell selected");
+					return;
+				}
+            	
             	$.get("event_action/deactivate/"+eid);
             	grid.flexReload();
+            }
+
+            function openCreateEventForm(){
+            	$( "#dialog-form" ).dialog( "open" );
             }
         </script>
 		</div>
@@ -251,7 +382,7 @@ footer {
 	            height: 230
             });
         </script>
-		<table id="dept_members_table" style="display: none"></table>
+			<table id="dept_members_table" style="display: none"></table>
 			<script type="text/javascript">
             $("#dept_members_table").flexigrid({
 	            url: 'http://localhost/apricot/index.php/admin/tlcmember_json',

@@ -129,9 +129,10 @@ class events extends CI_Controller{
 				$this->load->library('form_validation');
 				
 				$this->form_validation->set_rules("name", "Event Name", "trim|required|max_length[48]");
-				$this->form_validation->set_rules("day", "Day", "trim|required|is_natural");
-				$this->form_validation->set_rules("month", "Month", "trim|required|is_natural");
-				$this->form_validation->set_rules("year", "Year", "trim|required|is_natural");
+				//$this->form_validation->set_rules("day", "Day", "trim|required|is_natural");
+				//$this->form_validation->set_rules("month", "Month", "trim|required|is_natural");
+				//$this->form_validation->set_rules("year", "Year", "trim|required|is_natural");
+				$this->form_validation->set_rules("date", "Date", "trim|required|alpha_dash");
 				$this->form_validation->set_rules("about", "Write event description here.", "trim|required|max_length[512]");
 				$this->form_validation->set_rules("rules", "Write event rules here.", "trim|required|max_length[512]");
 				
@@ -139,7 +140,9 @@ class events extends CI_Controller{
 					$data['error'] = validation_errors();
 					$data['title'] = "The Literary Club - Create Event";
 					$data['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
-					$this->load->view('create_event_form', $data);
+					//$this->load->view('create_event_form', $data);
+					
+					echo validation_errors();
 					return;
 				} else {
 					$profile = $this->tlc_model->get_profile();
@@ -150,10 +153,10 @@ class events extends CI_Controller{
 						'about' => $this->input->post('about'),
 						'rules' => $this->input->post('rules'),
 						'creator_id' => $profile['id'],
-						'event_date' => mktime(9, 30, 0,
+						'event_date' => strtotime($this->input->post("date"))/*mktime(9, 30, 0,
 										$this->input->post('month'),
 										$this->input->post('day'),
-										$this->input->post('year'))
+										$this->input->post('year'))*/
 					);
 					
 					$this->events_model->create($evt);

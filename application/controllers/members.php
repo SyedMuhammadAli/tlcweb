@@ -11,6 +11,7 @@ class Members extends CI_Controller{
 		parent::__construct();
 		$this->load->model('tlc_model');
 		$this->load->library("userauthorization", array("session_object" => $this->session));
+		$this->load->library('enigma');
 		
 		$this->is_logged_in = $this->userauthorization->isUserLoggedIn();
 		
@@ -79,9 +80,18 @@ class Members extends CI_Controller{
 				$data["validation_errors"] = validation_errors();
 				//$this->load->view("change_password", $data);
 			} else {
-				if($this->tlc_model->validate_password($this->input->post("old_password"))){
-					$this->tlc_model->change_password_to($this->input->post("new_password"));
+				$uid = $this->session->userdata('uid');
+				$usr_row = $this->tlc_model->get_user_row($uid);
+				
+				if($this->enigma->checkPass($this->input->post("old_password"), $usr_row->pswd, $usr_row->salt)){
+					$pass_arr = $this->enigma->Encrypt($this->input->post("new_password"));
+					$this->tlc_model->change_password_to($uid, $pass_arr['hash'], $pass_arr['rand_str']);
 					redirect("home/logout");
+				}
+				else
+				{
+					echo "<h3>You entered a wrong password, please try again. Please try again.</h3>";
+					echo anchor("home/", "[Home]") . "  ";
 				}
 			}
 		} else {

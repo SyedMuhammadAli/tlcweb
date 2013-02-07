@@ -18,10 +18,11 @@ class Tlc_model extends CI_Model{
 		$query = $this->db->get("members");
 
 		$row = $query->row(0);
-		if($this->enigma->checkPass($pass, $row->pswd, $row->salt))
-		     return true;
+        
+		if(!$row)
+		     return false;
 		else		
-			return false;
+			return $row;
 	}
 	
 	function get_profile($id){
@@ -85,15 +86,13 @@ class Tlc_model extends CI_Model{
 	}
 	*/
 	
-	function validate_password($uid, $pswd){
-		$user_row = $this->db->get_where("members", array("id" => $uid))->row();
-		
-		return ($user_row->pswd == md5($pswd)) ? true : false;
+	function get_user_row($uid){
+		return $this->db->get_where("members", array("id" => $uid))->row();
 	}
 	
-	function change_password_to($uid, $new_password){
+	function change_password_to($uid, $hash, $salt){
 		$this->db->where("id", $uid);
-		$this->db->update("members", array("pswd" => md5($new_password)));
+		$this->db->update("members", array("pswd" => $hash, "salt" => $salt));
 	}
 	
 	function get_institute_array(){

@@ -101,4 +101,8 @@ class Events_model extends CI_Model{
 		
 		$this->db->insert("participant_teams", $team);
 	}
+	
+	function get_all_events(){
+		return $this->db->get("events");
+	}
 }

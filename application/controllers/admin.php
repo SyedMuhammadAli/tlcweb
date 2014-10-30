@@ -204,5 +204,13 @@ class Admin extends CI_Controller {
 				die("invalid member action.");
 		}
 	}
+	
+	function article_json(){
+		$q = $this->tlc_model
+			->get_thread_by_id( $this->input->post("article_id") )
+			->row_array();
+		
+		echo json_encode($q);
+	}
 }
 ?>

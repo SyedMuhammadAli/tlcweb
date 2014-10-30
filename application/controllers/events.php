@@ -49,20 +49,43 @@ class events extends CI_Controller{
 		}
 	}
 	
-	function timeline($time){
-		if($time != "future" && $time != "past"){ return; } //ADD APPROPRIATE ERROR MSG HERE
-		
-		$evt['events'] = $time == "future" ? $this->events_model->get_upcoming_events() : $this->events_model->get_past_events();
-		
-		$evt['title'] = "The Literary Club - Upcomming Events";
-		
-		$evt['total_threads'] = $this->total_threads;
-		$evt['total_comments'] = $this->total_comments;
-		$evt['total_members'] = $this->total_members;
-		
+	function timeline($time=null){
+		$evt['title'] = "The Literary Club - Event Timeline";
 		$evt['is_logged_in'] = $this->userauthorization->isUserLoggedIn();
-
-		$this->load->view("events_list", $evt);
+		$this->load->view('timeline_view', $evt);
+	}
+	
+	function timeline_json(){
+		$events_query = $this->events_model->get_all_events();
+		$last_key = end( array_keys($events_query->result()) ) + 1;
+		$count = 0;
+		
+		echo "{ \"timeline\": {
+				\"headline\":\"TLC Event Timeline\",
+				\"type\":\"default\", 
+				\"text\":\"Celebrating our rich history\", 
+				\"startDate\":\"" . date('Y,m,d') . "\", 
+				\"date\": [";
+		
+		foreach($events_query->result() as $event){
+			$count++;
+			$event_object = array(
+				'startDate' => date('Y,m,d', $event->event_date),
+				'headline' => $event->name,
+				'text' => $event->slogan,
+				'asset' => array(
+					'media' => 	'http://www.team-bhp.com/forum/attachments/shifting-gears/1033178d1356977973-official-non-auto-image-thread-_mg_0143.jpg',
+					'credit' => 'OCBies Photography',
+					'caption' => 'A dive into the history of tlc'
+				)
+			);
+			
+			echo json_encode($event_object);
+			
+			if($count != $last_key) echo ",";
+		}
+		
+		echo "] } }";
 	}
 	
 	function comment(){
@@ -129,6 +152,7 @@ class events extends CI_Controller{
 				$this->load->library('form_validation');
 				
 				$this->form_validation->set_rules("name", "Event Name", "trim|required|max_length[48]");
+				$this->form_validation->set_rules("slogan", "Event Slogan", "trim|required|max_length[128]");
 				//$this->form_validation->set_rules("day", "Day", "trim|required|is_natural");
 				//$this->form_validation->set_rules("month", "Month", "trim|required|is_natural");
 				//$this->form_validation->set_rules("year", "Year", "trim|required|is_natural");
@@ -150,18 +174,14 @@ class events extends CI_Controller{
 					
 					$evt = array(
 						'name' => $this->input->post('name'),
+						'slogan' => $this->input->post('slogan'),
 						'about' => $this->input->post('about'),
 						'rules' => $this->input->post('rules'),
 						'creator_id' => $profile['id'],
-						'event_date' => strtotime($this->input->post("date"))/*mktime(9, 30, 0,
-										$this->input->post('month'),
-										$this->input->post('day'),
-										$this->input->post('year'))*/
+						'event_date' => strtotime($this->input->post("date"))
 					);
 					
 					$this->events_model->create($evt);
-					
-					//echo "DEBUG: " . $evt['event_date'];
 					
 					redirect('home');
 				}

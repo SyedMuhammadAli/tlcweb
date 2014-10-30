@@ -3,15 +3,7 @@
 		<?php echo anchor("home", "Home");?>
 	</li>
 	<li>
-		<?php echo anchor("#", "Events"); ?>
-		<ul class="sub-menu">
-			<li>
-				<?php echo anchor("events/timeline/future","Upcoming Events");?>
-			</li>
-			<li>
-				<?php echo anchor("events/timeline/past","Past Events");?>
-			</li>
-		</ul>
+		<?php echo anchor("events/timeline", "Events"); ?>
 	</li>
 	<?php if(!$is_logged_in):?>
 	<li>

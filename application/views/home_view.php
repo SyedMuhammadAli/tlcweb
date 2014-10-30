@@ -56,7 +56,7 @@
 			<div id="top-stitch"></div>
 			<div class="container">
 				<div id="logo-area">
-                	<?php echo img(array('src'=>'images/logo.png', 'alt' => 'Logo', 'href'=>'http://www.tlc.net46.net','id'=>'logo'));?>
+                	<?php echo img(array('src'=>'images/logo.png', 'alt' => 'Logo', 'href'=>'http://www.tlcnuces.com','id'=>'logo'));?>
 					<p id="slogan">Welcome To The Literary Club</p>
 				</div> <!-- end #logo-area -->
 				<div id="content">
@@ -282,12 +282,5 @@
 		echo script_tag('js/jquery.fancybox-1.3.4.pack.js');
 		echo script_tag('js/et-ptemplates-frontend.js');
 	?>
-
-
 </body>
 </html>
-<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
-
-Database Caching 25/77 queries in 0.019 seconds using disk: basic
-
-Served from: www.elegantthemes.com @ 2012-06-05 07:36:29 -->

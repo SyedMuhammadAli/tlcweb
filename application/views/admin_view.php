@@ -86,6 +86,12 @@ fieldset {
 	font-family: sans-serif;
 	text-decoration: none;
 }
+
+#article-modal-dialog {
+	text-decoration: none;
+	font-family: sans-serif;
+	font-size: 16px;
+}
 </style>
 </head>
 <body>
@@ -154,6 +160,7 @@ fieldset {
 		</div>
 		<div id="content">
 			<table id="content_table" style="display: none"></table>
+            <div id="article-modal-dialog" title="Article Title"></div>
 			<script type="text/javascript">
             $("#content_table").flexigrid({
 	            url: 'http://localhost/apricot/index.php/admin/content_json',
@@ -176,14 +183,42 @@ fieldset {
 	            showTableToggleBtn: false,   
 	            singleSelect: true,
 	            width: window.size,
-	            height: 200
+	            height: 200,
+	            buttons: [ {name: 'View Article', bclass: 'article-view', onpress: viewArticleAction} ]
             });
-        </script>
+            
+            function viewArticleAction(){
+            	var grid = $('#content_table');
+            	var aid = $('.trSelected td:nth-child(1) div', grid).text();
+				
+				$.post("http://localhost/apricot/index.php/admin/article_json/",
+						{ article_id : aid },
+						function(done){
+							var article_view = $("#article-modal-dialog");
+							article_view.attr({ title : done.title });
+							article_view.text(done.post);
+							article_view.dialog({title: done.title});
+							article_view.dialog("open");
+						}, "json" );
+            }
+            
+            $(function(){
+                $("#article-modal-dialog").dialog({
+                    autoOpen: false,
+                    height: 400,
+                    width: 500,
+                    modal: true,
+                    show: "clip",
+                    hide: "clip"
+                });
+            });
+        	</script>
 		</div>
 		<div id="events">
 			<script>
 			$(function(){
 				var event_name = $( "#event_name" ),
+					event_caption = $( "#event_caption" ),
 					event_date = $( "#event_date" ),
 					event_about = $( "#event_about" ),
 			      	event_rules = $("#event_rules"),
@@ -220,6 +255,7 @@ fieldset {
 			          //allFields.removeClass( "ui-state-error" );
 			 		  
 			          bValid = bValid && checkLength( event_name, "event_name", 2, 48 );
+			          bValid = bValid && checkLength( event_caption, "event_caption", 2, 128);
 			          bValid = bValid && checkLength( event_about, "event_about", 6, 512 );
 			          bValid = bValid && checkLength( event_rules, "event_rules", 6, 512 );
 			          
@@ -227,11 +263,12 @@ fieldset {
 			        	$.post("http://localhost/apricot/index.php/events/create/done",
 			        	{
 			        		name : event_name.val(), 
+			        		slogan : event_caption.val(),
 			        		date : event_date.val(),
 			        		about: event_about.val(), 
 			        		rules: event_rules.val()
 			        	})
-			        	.done( function() { $('#events_table').flexReload(); });
+			        	.done( function(done) { $('#events_table').flexReload(); });
 			        	
 			          	$( this ).dialog( "close" );
 			          }
@@ -240,10 +277,11 @@ fieldset {
 			          $( this ).dialog( "close" );
 			        }
 			      },
-			      
 			      close: function() {
 			        allFields.val( "" ).removeClass( "ui-state-error" );
-			      }
+			      },
+                  show: "clip",
+                  hide: "clip"
 			    });
 			 	
 			});
@@ -256,6 +294,10 @@ fieldset {
 						<label for="event_name" class="jqui-form-label">Event Name</label>
 						<input type="text"
 							name="event_name" id="event_name"
+							class="text ui-widget-content ui-corner-all" />
+						<label for="event_caption" class="jqui-form-label">Event Caption</label>
+						<input type="text"
+							name="event_caption" id="event_caption"
 							class="text ui-widget-content ui-corner-all" />
 						<label for="event_date" class="jqui-form-label">Event Date</label>
 						<input type="date"
